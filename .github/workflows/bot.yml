@@ -1,0 +1,44 @@
+name: Run DMI Toolbox bot
+
+on:
+  schedule:
+    # Hourly at :20, after any 1H/2H/4H candle has closed. Each run only
+    # processes bars it hasn't seen yet, so running more often than the
+    # timeframe is harmless.
+    - cron: '20 * * * *'
+  workflow_dispatch: {}
+
+# Needed so the job can commit the updated state/*.json back.
+permissions:
+  contents: write
+
+concurrency:
+  group: bot-run
+  cancel-in-progress: false
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run bot
+        run: node src/run.js
+
+      - name: Commit updated state
+        run: |
+          git config user.name "dmi-toolbox-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add state/
+          git diff --cached --quiet && echo "no state changes" && exit 0
+          git commit -m "DMI bot run $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          # Rebase onto anything pushed meanwhile (e.g. a reset) and retry.
+          for i in 1 2 3 4; do
+            git pull --rebase && git push && exit 0
+            sleep $((i * 5))
+          done
+          exit 1

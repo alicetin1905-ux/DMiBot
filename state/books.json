@@ -1,0 +1,82 @@
+{
+  "BTC": {
+    "cash": 1000,
+    "entries": []
+  },
+  "ETH": {
+    "cash": 1000,
+    "entries": []
+  },
+  "BNB": {
+    "cash": 1000,
+    "entries": []
+  },
+  "XRP": {
+    "cash": 1000,
+    "entries": []
+  },
+  "SOL": {
+    "cash": 1000,
+    "entries": []
+  },
+  "TRX": {
+    "cash": 1000,
+    "entries": []
+  },
+  "ZEC": {
+    "cash": 1000,
+    "entries": []
+  },
+  "HYPE": {
+    "cash": 1000,
+    "entries": []
+  },
+  "DOGE": {
+    "cash": 1000,
+    "entries": []
+  },
+  "LINK": {
+    "cash": 1000,
+    "entries": []
+  },
+  "ADA": {
+    "cash": 1000,
+    "entries": []
+  },
+  "XLM": {
+    "cash": 1000,
+    "entries": []
+  },
+  "BCH": {
+    "cash": 1000,
+    "entries": []
+  },
+  "NEAR": {
+    "cash": 1000,
+    "entries": []
+  },
+  "UNI": {
+    "cash": 1000,
+    "entries": []
+  },
+  "LTC": {
+    "cash": 1000,
+    "entries": []
+  },
+  "AVAX": {
+    "cash": 1000,
+    "entries": []
+  },
+  "SUI": {
+    "cash": 1000,
+    "entries": []
+  },
+  "HBAR": {
+    "cash": 1000,
+    "entries": []
+  },
+  "SHIB": {
+    "cash": 1000,
+    "entries": []
+  }
+}

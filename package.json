@@ -1,0 +1,15 @@
+{
+  "name": "dmibot",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Paper-trading bot running Chart0bserver's TradingView DMI Toolbox Strategy on the top 20 crypto coins.",
+  "main": "src/run.js",
+  "scripts": {
+    "start": "node src/run.js",
+    "backtest": "node src/backtest.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MPL-2.0"
+}

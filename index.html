@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>DMI Toolbox Bot</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* Same palette as UltimateTradingBot's dashboard; --bot is this bot's own accent. */
+  :root{
+    --bg:#070a09; --panel:#0e1412; --panel2:#121a17; --border:#1b2320;
+    --text-primary:#eef3f0; --text-secondary:#93a49c; --text-tertiary:#5c6b64;
+    --up:#35ffb0; --down:#ff4d6a; --warn:#ffc857; --bot:#5ab4ff;
+    --mono:'JetBrains Mono','SF Mono',Consolas,monospace;
+    --sans:'Inter',system-ui,sans-serif;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; min-height:100%; background:var(--bg); color:var(--text-primary); font-family:var(--sans); -webkit-font-smoothing:antialiased; }
+  body{ padding:16px 16px max(16px, env(safe-area-inset-bottom)); padding-top:max(16px, env(safe-area-inset-top)); max-width:980px; margin:0 auto; }
+
+  .head{ display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom:4px; }
+  .head h1{ margin:0; font-size:18px; letter-spacing:0.02em; }
+  .head .sub{ font-family:var(--mono); font-size:11px; color:var(--text-tertiary); letter-spacing:0.04em; text-transform:uppercase; }
+  .banner{ margin:12px 0 16px; padding:9px 12px; border-radius:10px; background:rgba(90,180,255,0.08); border:1px solid rgba(90,180,255,0.25); color:var(--text-secondary); font-size:11.5px; line-height:1.5; }
+  .banner b{ color:var(--bot); }
+
+  .totalCard{ background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:16px; margin-bottom:14px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; }
+  .label{ font-size:10px; letter-spacing:0.14em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:4px; }
+  .totalCard .value{ font-family:var(--mono); font-size:26px; font-weight:700; }
+  .totalCard .pnl{ font-family:var(--mono); font-size:13px; margin-top:2px; }
+  .up{ color:var(--up); } .down{ color:var(--down); } .flat{ color:var(--text-tertiary); }
+  .btn{ display:inline-block; margin-top:7px; padding:5px 10px; border-radius:7px; background:var(--panel2); border:1px solid var(--border); color:var(--text-secondary); font-family:var(--mono); font-size:10px; text-decoration:none; letter-spacing:0.03em; cursor:pointer; }
+  .btn:active{ opacity:0.7; }
+
+  h2{ font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:var(--text-tertiary); margin:20px 0 8px; }
+  .card{ background:var(--panel); border:1px solid var(--border); border-radius:12px; overflow:hidden; }
+  .empty{ padding:16px 12px; color:var(--text-tertiary); font-size:12px; text-align:center; }
+
+  .statGrid{ display:grid; grid-template-columns:repeat(2, 1fr); gap:12px 10px; padding:14px; }
+  @media (min-width:480px){ .statGrid{ grid-template-columns:repeat(4, 1fr); } }
+  .stat .k{ font-size:9.5px; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-tertiary); }
+  .stat .v{ font-family:var(--mono); font-size:16px; font-weight:700; margin-top:3px; }
+
+  .grid{ display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:10px; }
+  @media (min-width:620px){ .grid{ grid-template-columns:repeat(3, minmax(0, 1fr)); } }
+  @media (min-width:860px){ .grid{ grid-template-columns:repeat(4, minmax(0, 1fr)); } }
+  .coin{ background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:12px; min-width:0; }
+  .coin.inpos{ border-color:rgba(53,255,176,0.35); }
+  .coin .top{ display:flex; justify-content:space-between; align-items:baseline; gap:6px; }
+  .coin .sym{ font-weight:700; font-size:13px; }
+  .coin .px{ font-family:var(--mono); font-size:10.5px; color:var(--text-tertiary); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .coin .bal{ font-family:var(--mono); font-size:16px; margin-top:6px; }
+  .coin .pnl{ font-family:var(--mono); font-size:11px; margin-top:2px; }
+  .coin .pos{ margin-top:8px; padding-top:8px; border-top:1px solid var(--border); font-family:var(--mono); font-size:10.5px; color:var(--text-secondary); line-height:1.6; }
+  .coin .pos b{ color:var(--up); }
+  .chips{ display:flex; flex-wrap:wrap; gap:4px; margin-top:8px; }
+  .chip{ font-family:var(--mono); font-size:9px; font-weight:700; letter-spacing:0.04em; padding:2px 6px; border-radius:5px; background:var(--panel2); color:var(--text-tertiary); }
+  .chip.on{ color:var(--up); background:rgba(53,255,176,0.1); }
+  .chip.off{ color:var(--down); background:rgba(255,77,106,0.1); }
+  .chip.sig{ color:var(--bg); background:var(--bot); }
+  .dmi{ margin-top:6px; font-family:var(--mono); font-size:9.5px; color:var(--text-tertiary); }
+
+  .trade{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:9px 12px; border-bottom:1px solid var(--border); font-size:12px; }
+  .trade:last-child{ border-bottom:0; }
+  .trade .sym{ font-weight:700; width:52px; flex:0 0 auto; }
+  .trade .reason{ color:var(--text-secondary); flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .trade .when{ font-family:var(--mono); font-size:10px; color:var(--text-tertiary); flex:0 0 auto; }
+  .trade .pnl{ font-family:var(--mono); font-weight:600; flex:0 0 auto; min-width:64px; text-align:right; }
+
+  .tableWrap{ overflow-x:auto; }
+  table{ width:100%; border-collapse:collapse; font-family:var(--mono); font-size:11px; }
+  th, td{ padding:7px 10px; text-align:right; border-bottom:1px solid var(--border); white-space:nowrap; }
+  th{ font-size:9.5px; letter-spacing:0.06em; text-transform:uppercase; color:var(--text-tertiary); font-weight:500; }
+  th:first-child, td:first-child{ text-align:left; }
+  tfoot td{ font-weight:700; border-bottom:0; }
+  .note{ padding:10px 12px; font-size:10.5px; color:var(--text-tertiary); line-height:1.5; border-top:1px solid var(--border); }
+
+  .footer{ margin-top:18px; display:flex; align-items:center; justify-content:space-between; gap:8px; }
+  .footer .hint{ font-size:10.5px; color:var(--text-tertiary); }
+</style>
+</head>
+<body>
+
+<div class="head">
+  <h1>DMI Toolbox Bot</h1>
+  <div class="sub" id="subtitle">Paper trading · top 20 crypto · long only</div>
+</div>
+
+<div class="banner">
+  <b>Paper trading only</b>: no API keys, no exchange account, no real orders. The bot runs Chart0bserver's
+  <a href="https://www.tradingview.com/script/kgsU4SHu-DMI-Toolbox-Strategy/" target="_blank" rel="noopener" style="color:var(--bot)">DMI Toolbox Strategy</a>
+  with its default settings on OKX spot candles, and tracks a simulated $1,000 per coin.
+</div>
+
+<div class="totalCard">
+  <div>
+    <div class="label">Total equity</div>
+    <div class="value" id="totalValue">—</div>
+    <div class="pnl flat" id="totalPnl">—</div>
+  </div>
+  <div style="text-align:right">
+    <div class="label">Started</div>
+    <div class="value" id="startedValue" style="font-size:15px; color:var(--text-secondary)">—</div>
+    <a class="btn" href="https://github.com/alicetin1905-ux/DMiBot/actions/workflows/reset.yml" target="_blank" rel="noopener" title="Opens GitHub. Click &quot;Run workflow&quot; there to confirm">Reset account</a>
+  </div>
+</div>
+
+<h2>Performance</h2>
+<div class="card" id="perf"><div class="empty">Loading…</div></div>
+
+<h2>Coins</h2>
+<div class="grid" id="coins"></div>
+
+<h2>Recent trades</h2>
+<div class="card" id="trades"><div class="empty">Loading…</div></div>
+
+<h2>Backtest</h2>
+<div class="card" id="backtest"><div class="empty">Loading…</div></div>
+
+<div class="footer">
+  <div class="hint" id="updated">—</div>
+  <button type="button" class="btn" id="refresh" style="margin:0">Refresh</button>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  // Keep in step with config.js.
+  var SYMBOLS = ['BTC','ETH','BNB','XRP','SOL','TRX','ZEC','HYPE','DOGE','LINK','ADA','XLM','BCH','NEAR','UNI','LTC','AVAX','SUI','HBAR','SHIB'];
+  var BALANCE = 1000;
+  var TIMEFRAME = '4H';
+  var PYRAMIDING = 5;
+
+  var RAW = 'https://raw.githubusercontent.com/alicetin1905-ux/DMiBot/main/';
+
+  function $(id) { return document.getElementById(id); }
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function money(x) { return '$' + x.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+  function signed(x) { return (x < 0 ? '−' : '+') + money(Math.abs(x)); }
+  function pct(x, d) { return (x < 0 ? '−' : '+') + Math.abs(x).toFixed(d == null ? 2 : d) + '%'; }
+  function cls(x) { return x > 0.004 ? 'up' : x < -0.004 ? 'down' : 'flat'; }
+  function price(x) { return x >= 1 ? x.toLocaleString('en-US', { maximumFractionDigits: 2 }) : x.toPrecision(4); }
+  function ago(ms) {
+    var m = Math.round((Date.now() - ms) / 60000);
+    if (m < 60) return m + 'm ago';
+    if (m < 1440) return Math.round(m / 60) + 'h ago';
+    return Math.round(m / 1440) + 'd ago';
+  }
+
+  async function getJson(url) {
+    var r = await fetch(url + (url.indexOf('?') < 0 ? '?' : '&') + '_=' + Date.now(), { cache: 'no-store' });
+    if (!r.ok) throw new Error(url + ' ' + r.status);
+    return r.json();
+  }
+
+  async function livePrices() {
+    try {
+      var d = await getJson('https://www.okx.com/api/v5/market/tickers?instType=SPOT');
+      var out = {};
+      (d.data || []).forEach(function (t) {
+        var m = /^([A-Z0-9]+)-USDT$/.exec(t.instId);
+        if (m) out[m[1]] = +t.last;
+      });
+      return out;
+    } catch (e) { return {}; }
+  }
+
+  function render(books, trades, signals, prices, bt) {
+    var total = 0, realised = 0, unreal = 0, openCount = 0;
+    var coinHtml = SYMBOLS.map(function (s) {
+      var b = books[s] || { cash: BALANCE, entries: [] };
+      var sig = signals[s] || null;
+      var px = prices[s] || (sig ? sig.price : null);
+      var qty = 0, cost = 0;
+      b.entries.forEach(function (e) { qty += e.qty; cost += e.qty * e.price; });
+      var open = px ? qty * px - cost : 0;
+      var eq = b.cash + open;
+      total += eq; realised += b.cash - BALANCE; unreal += open;
+      if (b.entries.length) openCount++;
+
+      var pos = b.entries.length
+        ? '<div class="pos"><b>LONG</b> ' + b.entries.length + '/' + PYRAMIDING + ' layers · avg ' + price(cost / qty) +
+          '<br>open <span class="' + cls(open) + '">' + signed(open) + ' (' + pct(open / cost * 100) + ')</span></div>'
+        : '';
+      var chips = sig
+        ? '<div class="chips">' +
+            (sig.entrySignal ? '<span class="chip sig">ENTRY</span>' : '') +
+            (sig.exitSignal ? '<span class="chip off">EXIT</span>' : '') +
+            '<span class="chip ' + (sig.bullishPattern ? 'on' : 'off') + '">' + (sig.bullishPattern ? '+DI &gt; −DI' : '−DI &gt; +DI') + '</span>' +
+            '<span class="chip ' + (sig.aboveSma200 ? 'on' : 'off') + '">' + (sig.aboveSma200 ? '&gt; 200 SMA' : '&lt; 200 SMA') + '</span>' +
+          '</div>' +
+          '<div class="dmi">+DI ' + sig.plusDI + ' · −DI ' + sig.minusDI + ' · ADX ' + sig.adx + '</div>'
+        : '<div class="dmi">waiting for first run</div>';
+
+      return '<div class="coin' + (b.entries.length ? ' inpos' : '') + '">' +
+        '<div class="top"><span class="sym">' + s + '</span><span class="px">' + (px ? price(px) : '—') + '</span></div>' +
+        '<div class="bal">' + money(eq) + '</div>' +
+        '<div class="pnl ' + cls(eq - BALANCE) + '">' + signed(eq - BALANCE) + ' · ' + pct((eq / BALANCE - 1) * 100) + '</div>' +
+        pos + chips + '</div>';
+    }).join('');
+    $('coins').innerHTML = coinHtml;
+
+    var start = SYMBOLS.length * BALANCE;
+    $('totalValue').textContent = money(total);
+    $('totalPnl').textContent = signed(total - start) + ' · ' + pct((total / start - 1) * 100);
+    $('totalPnl').className = 'pnl ' + cls(total - start);
+    $('startedValue').textContent = money(start);
+
+    var wins = trades.filter(function (t) { return t.pnl > 0; });
+    var gw = wins.reduce(function (s, t) { return s + t.pnl; }, 0);
+    var gl = -trades.filter(function (t) { return t.pnl <= 0; }).reduce(function (s, t) { return s + t.pnl; }, 0);
+    var pf = gl > 0 ? (gw / gl).toFixed(2) : (gw > 0 ? '∞' : '—');
+    $('perf').innerHTML = '<div class="statGrid">' +
+      stat('Closed trades', trades.length) +
+      stat('Win rate', trades.length ? (wins.length / trades.length * 100).toFixed(0) + '%' : '—') +
+      stat('Profit factor', pf) +
+      stat('Open positions', openCount + ' / ' + SYMBOLS.length) +
+      stat('Realised P&amp;L', '<span class="' + cls(realised) + '">' + signed(realised) + '</span>') +
+      stat('Unrealised P&amp;L', '<span class="' + cls(unreal) + '">' + signed(unreal) + '</span>') +
+      stat('Timeframe', TIMEFRAME) +
+      stat('Sizing', '10% × ' + PYRAMIDING) +
+      '</div>';
+
+    var recent = trades.slice(-25).reverse();
+    $('trades').innerHTML = recent.length ? recent.map(function (t) {
+      return '<div class="trade"><span class="sym">' + esc(t.symbol) + '</span>' +
+        '<span class="reason" title="' + esc(t.reason) + '">' + t.entries + '× @ ' + price(t.avgEntry) + ' → ' + price(t.price) + ' · ' + esc(t.reason) + '</span>' +
+        '<span class="when">' + ago(t.closedAt) + '</span>' +
+        '<span class="pnl ' + cls(t.pnl) + '">' + signed(t.pnl) + '</span></div>';
+    }).join('') : '<div class="empty">No closed trades yet. Entries need +DI above −DI, price over its 200 SMA, above-average volume and a trigger.</div>';
+
+    renderBacktest(bt);
+  }
+
+  function stat(k, v) { return '<div class="stat"><div class="k">' + k + '</div><div class="v">' + v + '</div></div>'; }
+
+  function renderBacktest(bt) {
+    if (!bt || !bt.rows) { $('backtest').innerHTML = '<div class="empty">No backtest results published yet.</div>'; return; }
+    var rows = bt.rows.slice().sort(function (a, b) { return b.netPct - a.netPct; });
+    var avg = function (k) { return bt.rows.reduce(function (s, r) { return s + r[k]; }, 0) / bt.rows.length; };
+    var body = rows.map(function (r) {
+      return '<tr><td>' + esc(r.symbol) + '</td>' +
+        '<td class="' + cls(r.netPct) + '">' + pct(r.netPct, 1) + '</td>' +
+        '<td class="' + cls(r.buyHoldPct) + '">' + pct(r.buyHoldPct, 1) + '</td>' +
+        '<td>' + r.trades + '</td><td>' + r.winRate.toFixed(0) + '%</td>' +
+        '<td>' + (r.profitFactor == null ? '∞' : r.profitFactor.toFixed(2)) + '</td>' +
+        '<td>' + r.maxDDPct.toFixed(1) + '%</td></tr>';
+    }).join('');
+    $('backtest').innerHTML = '<div class="tableWrap"><table>' +
+      '<thead><tr><th>Coin</th><th>Net</th><th>Buy &amp; hold</th><th>Trades</th><th>Win</th><th>PF</th><th>Max DD</th></tr></thead>' +
+      '<tbody>' + body + '</tbody>' +
+      '<tfoot><tr><td>Avg</td><td class="' + cls(avg('netPct')) + '">' + pct(avg('netPct'), 1) + '</td><td class="' + cls(avg('buyHoldPct')) + '">' + pct(avg('buyHoldPct'), 1) + '</td><td></td><td></td><td></td><td>' + avg('maxDDPct').toFixed(1) + '%</td></tr></tfoot>' +
+      '</table></div>' +
+      '<div class="note">' + esc(bt.tf) + ' candles, last ' + bt.days + ' days (ZEC and HYPE from their OKX listing), $1,000 per coin, 0.1% commission per side. ' +
+      'Backtests are not a forecast. Most of the return comes from being out of the market during downtrends; in strong bull runs buy &amp; hold usually wins.</div>';
+  }
+
+  async function load() {
+    $('updated').textContent = 'Loading…';
+    try {
+      var res = await Promise.all([
+        getJson(RAW + 'state/books.json').catch(function () { return {}; }),
+        getJson(RAW + 'state/trades.json').catch(function () { return []; }),
+        getJson(RAW + 'state/signals.json').catch(function () { return {}; }),
+        livePrices(),
+        getJson(RAW + 'backtest/results-' + TIMEFRAME + '.json').catch(function () { return null; }),
+      ]);
+      render(res[0], res[1], res[2], res[3], res[4]);
+      var times = Object.keys(res[2]).map(function (k) { return Date.parse(res[2][k].at); }).filter(isFinite);
+      $('updated').textContent = times.length ? 'Bot last ran ' + ago(Math.max.apply(null, times)) + ' · prices live from OKX' : 'Bot has not run yet';
+    } catch (e) {
+      $('updated').textContent = 'Could not load state: ' + e.message;
+    }
+  }
+
+  $('refresh').addEventListener('click', load);
+  load();
+  setInterval(load, 60000);
+})();
+</script>
+</body>
+</html>
