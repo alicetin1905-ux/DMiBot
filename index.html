@@ -62,6 +62,8 @@
   .chip.on{ color:var(--up); background:rgba(53,255,176,0.1); }
   .chip.off{ color:var(--down); background:rgba(255,77,106,0.1); }
   .chip.sig{ color:var(--bg); background:var(--bot); }
+  .chip.sigShort{ color:var(--bg); background:var(--down); }
+  .warnTxt{ color:var(--warn); }
   .dmi{ margin-top:6px; font-family:var(--mono); font-size:9.5px; color:var(--text-tertiary); }
 
   .trade{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:9px 12px; border-bottom:1px solid var(--border); font-size:12px; }
@@ -87,13 +89,14 @@
 
 <div class="head">
   <h1>DMI Toolbox Bot</h1>
-  <div class="sub" id="subtitle">Paper trading · top 20 crypto · long only</div>
+  <div class="sub" id="subtitle">Paper futures · top 20 crypto · long &amp; short · 10x</div>
 </div>
 
 <div class="banner">
   <b>Paper trading only</b>: no API keys, no exchange account, no real orders. The bot runs Chart0bserver's
   <a href="https://www.tradingview.com/script/kgsU4SHu-DMI-Toolbox-Strategy/" target="_blank" rel="noopener" style="color:var(--bot)">DMI Toolbox Strategy</a>
-  with its default settings on OKX spot candles, and tracks a simulated $1,000 per coin.
+  with its default settings on OKX USDT perpetual futures at <b>10x leverage</b>, and tracks a simulated $1,000 per coin.
+  At 10x, one bad candle can liquidate a coin's whole balance.
 </div>
 
 <div class="totalCard">
@@ -135,6 +138,8 @@
   var BALANCE = 1000;
   var TIMEFRAME = '4H';
   var PYRAMIDING = 5;
+  var LEVERAGE = 10;
+  var MAINT_MARGIN = 0.005;
 
   var RAW = 'https://raw.githubusercontent.com/alicetin1905-ux/DMiBot/main/';
 
@@ -160,10 +165,10 @@
 
   async function livePrices() {
     try {
-      var d = await getJson('https://www.okx.com/api/v5/market/tickers?instType=SPOT');
+      var d = await getJson('https://www.okx.com/api/v5/market/tickers?instType=SWAP');
       var out = {};
       (d.data || []).forEach(function (t) {
-        var m = /^([A-Z0-9]+)-USDT$/.exec(t.instId);
+        var m = /^([A-Z0-9]+)-USDT-SWAP$/.exec(t.instId);
         if (m) out[m[1]] = +t.last;
       });
       return out;
@@ -183,15 +188,20 @@
       total += eq; realised += b.cash - BALANCE; unreal += open;
       if (b.entries.length) openCount++;
 
+      var side = b.side || (sig && sig.side) || 0;
+      var liq = qty ? (cost - side * b.cash) / (qty * (MAINT_MARGIN - side)) : 0;
       var pos = b.entries.length
-        ? '<div class="pos"><b>LONG</b> ' + b.entries.length + '/' + PYRAMIDING + ' layers · avg ' + price(cost / qty) +
-          '<br>open <span class="' + cls(open) + '">' + signed(open) + ' (' + pct(open / cost * 100) + ')</span></div>'
+        ? '<div class="pos"><b>' + (side === 1 ? 'LONG' : 'SHORT') + ' ' + LEVERAGE + 'x</b> ' + b.entries.length + '/' + PYRAMIDING + ' layers · avg ' + price(cost / qty) +
+          '<br>size ' + money(cost) + ' · margin ' + money(cost / LEVERAGE) +
+          '<br>open <span class="' + cls(open) + '">' + signed(open) + ' (' + pct(open / (cost / LEVERAGE) * 100) + ' ROE)</span>' +
+          '<br><span class="warnTxt">liq ' + (liq > 0 ? price(liq) + (px ? ' (' + pct((liq / px - 1) * 100, 1) + ')' : '') : '—') + '</span></div>'
         : '';
       var chips = sig
         ? '<div class="chips">' +
-            (sig.entrySignal ? '<span class="chip sig">ENTRY</span>' : '') +
+            (sig.longEntrySignal ? '<span class="chip sig">LONG ENTRY</span>' : '') +
+            (sig.shortEntrySignal ? '<span class="chip sigShort">SHORT ENTRY</span>' : '') +
             (sig.exitSignal ? '<span class="chip off">EXIT</span>' : '') +
-            '<span class="chip ' + (sig.bullishPattern ? 'on' : 'off') + '">' + (sig.bullishPattern ? '+DI &gt; −DI' : '−DI &gt; +DI') + '</span>' +
+            '<span class="chip ' + (sig.bullishPattern ? 'on' : (sig.bearishPattern ? 'off' : '')) + '">' + (sig.bullishPattern ? '+DI &gt; −DI' : (sig.bearishPattern ? '−DI &gt; +DI' : 'no pattern')) + '</span>' +
             '<span class="chip ' + (sig.aboveSma200 ? 'on' : 'off') + '">' + (sig.aboveSma200 ? '&gt; 200 SMA' : '&lt; 200 SMA') + '</span>' +
           '</div>' +
           '<div class="dmi">+DI ' + sig.plusDI + ' · −DI ' + sig.minusDI + ' · ADX ' + sig.adx + '</div>'
@@ -223,16 +233,16 @@
       stat('Realised P&amp;L', '<span class="' + cls(realised) + '">' + signed(realised) + '</span>') +
       stat('Unrealised P&amp;L', '<span class="' + cls(unreal) + '">' + signed(unreal) + '</span>') +
       stat('Timeframe', TIMEFRAME) +
-      stat('Sizing', '10% × ' + PYRAMIDING) +
+      stat('Sizing', '10% × ' + PYRAMIDING + ' @ ' + LEVERAGE + 'x') +
       '</div>';
 
     var recent = trades.slice(-25).reverse();
     $('trades').innerHTML = recent.length ? recent.map(function (t) {
       return '<div class="trade"><span class="sym">' + esc(t.symbol) + '</span>' +
-        '<span class="reason" title="' + esc(t.reason) + '">' + t.entries + '× @ ' + price(t.avgEntry) + ' → ' + price(t.price) + ' · ' + esc(t.reason) + '</span>' +
+        '<span class="reason" title="' + esc(t.reason) + '">' + t.entries + '× @ ' + price(t.avgEntry) + ' → ' + price(t.price) + ' · ' + pct(t.pnlPct, 1) + ' ROE · ' + esc(t.reason) + '</span>' +
         '<span class="when">' + ago(t.closedAt) + '</span>' +
         '<span class="pnl ' + cls(t.pnl) + '">' + signed(t.pnl) + '</span></div>';
-    }).join('') : '<div class="empty">No closed trades yet. Entries need +DI above −DI, price over its 200 SMA, above-average volume and a trigger.</div>';
+    }).join('') : '<div class="empty">No closed trades yet. A long needs +DI above −DI, price over its 200 SMA, above-average volume and a trigger; a short is the mirror image.</div>';
 
     renderBacktest(bt);
   }
@@ -247,17 +257,17 @@
       return '<tr><td>' + esc(r.symbol) + '</td>' +
         '<td class="' + cls(r.netPct) + '">' + pct(r.netPct, 1) + '</td>' +
         '<td class="' + cls(r.buyHoldPct) + '">' + pct(r.buyHoldPct, 1) + '</td>' +
-        '<td>' + r.trades + '</td><td>' + r.winRate.toFixed(0) + '%</td>' +
+        '<td>' + r.trades + ' (' + (r.longTrades || 0) + '/' + (r.shortTrades || 0) + ')</td><td>' + r.winRate.toFixed(0) + '%</td>' +
         '<td>' + (r.profitFactor == null ? '∞' : r.profitFactor.toFixed(2)) + '</td>' +
-        '<td>' + r.maxDDPct.toFixed(1) + '%</td></tr>';
+        '<td>' + r.maxDDPct.toFixed(1) + '%</td><td>' + (r.liquidations || 0) + '</td></tr>';
     }).join('');
     $('backtest').innerHTML = '<div class="tableWrap"><table>' +
-      '<thead><tr><th>Coin</th><th>Net</th><th>Buy &amp; hold</th><th>Trades</th><th>Win</th><th>PF</th><th>Max DD</th></tr></thead>' +
+      '<thead><tr><th>Coin</th><th>Net</th><th>Buy &amp; hold</th><th>Trades (L/S)</th><th>Win</th><th>PF</th><th>Max DD</th><th>Liq</th></tr></thead>' +
       '<tbody>' + body + '</tbody>' +
-      '<tfoot><tr><td>Avg</td><td class="' + cls(avg('netPct')) + '">' + pct(avg('netPct'), 1) + '</td><td class="' + cls(avg('buyHoldPct')) + '">' + pct(avg('buyHoldPct'), 1) + '</td><td></td><td></td><td></td><td>' + avg('maxDDPct').toFixed(1) + '%</td></tr></tfoot>' +
+      '<tfoot><tr><td>Avg</td><td class="' + cls(avg('netPct')) + '">' + pct(avg('netPct'), 1) + '</td><td class="' + cls(avg('buyHoldPct')) + '">' + pct(avg('buyHoldPct'), 1) + '</td><td></td><td></td><td></td><td>' + avg('maxDDPct').toFixed(1) + '%</td><td>' + bt.rows.reduce(function (s, r) { return s + (r.liquidations || 0); }, 0) + '</td></tr></tfoot>' +
       '</table></div>' +
-      '<div class="note">' + esc(bt.tf) + ' candles, last ' + bt.days + ' days (ZEC and HYPE from their OKX listing), $1,000 per coin, 0.1% commission per side. ' +
-      'Backtests are not a forecast. Most of the return comes from being out of the market during downtrends; in strong bull runs buy &amp; hold usually wins.</div>';
+      '<div class="note">OKX perpetuals, long' + (bt.allowShorts !== false ? ' &amp; short' : ' only') + ', at ' + (bt.leverage || LEVERAGE) + 'x, ' + esc(bt.tf) + ' candles, last ' + bt.days + ' days, $1,000 per coin, ' + (bt.feePct != null ? bt.feePct : 0.05) + '% fee per side, ' + (bt.fundingPctPer8h != null ? bt.fundingPctPer8h : 0.01) + '% funding per 8h. ' +
+      'Buy &amp; hold is the unleveraged coin price change. Backtests are not a forecast, and leverage magnifies losses exactly as much as gains.</div>';
   }
 
   async function load() {

@@ -7,7 +7,7 @@
 
 module.exports = {
   // Top 20 coins by market cap (CoinGecko, Sep 2026) that OKX lists as a
-  // USDT spot pair — stablecoins, wrapped/tokenised assets and exchange
+  // USDT-margined perpetual swap — stablecoins, wrapped/tokenised assets and exchange
   // tokens with no OKX market (USDT, USDC, WBT, LEO, XMR, ...) skipped.
   SYMBOLS: [
     'BTC', 'ETH', 'BNB', 'XRP', 'SOL', 'TRX', 'ZEC', 'HYPE', 'DOGE', 'LINK',
@@ -43,19 +43,53 @@ module.exports = {
   ENTRY_PLUS_DI_CROSS_30: true,             // +DI crosses above 30
   ENTRY_SMOOTH_ADX_CROSS_SMOOTH_MINUS: true, // smoothed ADX crosses above smoothed -DI
 
-  // Exits.
+  // Exits (long).
   EXIT_ON_BEARISH_DI: false,         // +DI crosses under smoothed -DI
   EXIT_ON_ADX_REVERSAL: true,        // ADX crosses under smoothed ADX...
-  MIN_ADX_FOR_REVERSAL_EXIT: 38,     // ...while ADX is above this level
+  MIN_ADX_FOR_REVERSAL_EXIT: 38,     // ...while ADX is above this level (shared with shorts)
   USE_STOP_LOSS: true,
   STOP_LOSS_PCT: 2.5,                // open loss as % of realised equity (strategy.openprofit_percent)
   USE_TAKE_PROFIT: false,
   TAKE_PROFIT_PCT: 8,
 
+  // ---- Short side ----
+  // The published script is long-only. This is this project's own mirror of
+  // its long rules onto the short side (see src/dmi.js) — set false to
+  // trade the strategy exactly as published, long-only.
+  ALLOW_SHORTS: true,
+
+  // Mandatory requirements for a short entry — the mirror of the long block
+  // above (-DI/smoothed +DI in place of +DI/smoothed -DI, price vs. SMA
+  // flipped). Volume above its average is shared with the long side.
+  REQUIRE_BEAR_PATTERN: true,
+  MAX_CANDLES_SINCE_MINUS_CROSS: 150,
+  REQUIRE_PRICE_ABOVE_SMA21: false,
+  REQUIRE_PRICE_BELOW_SMA200: true,
+
+  // Entry triggers (any one fires a short) — mirror of the long triggers.
+  ENTRY_MINUS_DI_CROSS_30: true,
+  ENTRY_SMOOTH_ADX_CROSS_SMOOTH_PLUS: true,
+
+  // Exits (short) — mirror of EXIT_ON_BEARISH_DI. ADX reversal and the
+  // stop/take-profit % above are shared with the long side.
+  EXIT_ON_BULLISH_DI: false,         // -DI crosses under smoothed +DI
+
+  // ---- Futures (OKX USDT perpetual swaps) ----
+  // Each entry posts ORDER_PCT_OF_EQUITY of equity as margin and opens
+  // LEVERAGE times that in notional: 10% x 10x = a position the size of the
+  // whole balance per entry, up to 5x the balance with all 5 layers open.
+  LEVERAGE: 10,
+  // Cross margin within each coin's own balance: the coin is liquidated
+  // when its equity at a candle's low falls to maintenance margin.
+  MAINT_MARGIN_PCT: 0.5,
+  // Longs pay funding on notional. OKX's baseline rate is 0.01% per 8h;
+  // real rates vary, and are usually higher when the market is bullish.
+  FUNDING_PCT_PER_8H: 0.01,
+
   // ---- Position sizing / costs (script's strategy() header) ----
-  ORDER_PCT_OF_EQUITY: 10,  // default_qty_value=10, percent_of_equity
+  ORDER_PCT_OF_EQUITY: 10,  // default_qty_value=10 — here, margin per entry
   PYRAMIDING: 5,            // up to 5 stacked entries per coin
-  COMMISSION_PCT: 0.1,      // per side
+  COMMISSION_PCT: 0.05,     // per side, on notional (OKX taker fee for swaps)
 
   // Candles pulled per run — enough for the 200 SMA plus indicator warmup
   // and the 150-candle cross window.

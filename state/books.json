@@ -1,82 +1,122 @@
 {
   "BTC": {
     "cash": 1000,
-    "entries": []
+    "side": 0,
+    "entries": [],
+    "funding": 0
   },
   "ETH": {
     "cash": 1000,
-    "entries": []
+    "side": 0,
+    "entries": [],
+    "funding": 0
   },
   "BNB": {
     "cash": 1000,
-    "entries": []
+    "side": 0,
+    "entries": [],
+    "funding": 0
   },
   "XRP": {
     "cash": 1000,
-    "entries": []
+    "side": 0,
+    "entries": [],
+    "funding": 0
   },
   "SOL": {
     "cash": 1000,
-    "entries": []
+    "side": 0,
+    "entries": [],
+    "funding": 0
   },
   "TRX": {
     "cash": 1000,
-    "entries": []
+    "side": 0,
+    "entries": [],
+    "funding": 0
   },
   "ZEC": {
     "cash": 1000,
-    "entries": []
+    "side": 0,
+    "entries": [],
+    "funding": 0
   },
   "HYPE": {
     "cash": 1000,
-    "entries": []
+    "side": 0,
+    "entries": [],
+    "funding": 0
   },
   "DOGE": {
     "cash": 1000,
-    "entries": []
+    "side": 0,
+    "entries": [],
+    "funding": 0
   },
   "LINK": {
     "cash": 1000,
-    "entries": []
+    "side": 0,
+    "entries": [],
+    "funding": 0
   },
   "ADA": {
     "cash": 1000,
-    "entries": []
+    "side": 0,
+    "entries": [],
+    "funding": 0
   },
   "XLM": {
     "cash": 1000,
-    "entries": []
+    "side": 0,
+    "entries": [],
+    "funding": 0
   },
   "BCH": {
     "cash": 1000,
-    "entries": []
+    "side": 0,
+    "entries": [],
+    "funding": 0
   },
   "NEAR": {
     "cash": 1000,
-    "entries": []
+    "side": 0,
+    "entries": [],
+    "funding": 0
   },
   "UNI": {
     "cash": 1000,
-    "entries": []
+    "side": 0,
+    "entries": [],
+    "funding": 0
   },
   "LTC": {
     "cash": 1000,
-    "entries": []
+    "side": 0,
+    "entries": [],
+    "funding": 0
   },
   "AVAX": {
     "cash": 1000,
-    "entries": []
+    "side": 0,
+    "entries": [],
+    "funding": 0
   },
   "SUI": {
     "cash": 1000,
-    "entries": []
+    "side": 0,
+    "entries": [],
+    "funding": 0
   },
   "HBAR": {
     "cash": 1000,
-    "entries": []
+    "side": 0,
+    "entries": [],
+    "funding": 0
   },
   "SHIB": {
     "cash": 1000,
-    "entries": []
+    "side": 0,
+    "entries": [],
+    "funding": 0
   }
 }

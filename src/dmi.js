@@ -1,7 +1,13 @@
 // Port of Chart0bserver's "DMI Toolbox Strategy" signal logic (TradingView,
-// Pine v6, Mozilla Public License 2.0). Each helper below reproduces the
-// matching Pine built-in's semantics — including how it seeds and how it
-// treats na — so signals line up bar-for-bar with the published script.
+// Pine v6, Mozilla Public License 2.0). The long-side logic below reproduces
+// the matching Pine built-in's semantics — including how it seeds and how
+// it treats na — so signals line up bar-for-bar with the published script.
+//
+// The published script is long-only. The short side (bearishPattern,
+// shortEntry/exit, everything with "minus"/"plus" swapped below) is this
+// project's own mirror of that same logic, not part of the original script:
+// short when -DI does everything the long rules require of +DI, using a
+// smoothed +DI computed the same way the script smooths -DI.
 'use strict';
 
 const ok = (x) => x !== null && x !== undefined && Number.isFinite(x);
@@ -44,8 +50,9 @@ const crossunder = (a, b, i) => i > 0 && ok(a[i]) && ok(b[i]) && ok(a[i - 1]) &&
 const constant = (n, x) => Array(n).fill(x);
 
 // candles: oldest-first [{ t, o, h, l, c, v }], all closed.
-// Returns per-bar indicator values plus entry/exit flags evaluated at each
-// bar's close — the same point the script evaluates them in a backtest.
+// Returns per-bar indicator values plus long/short entry+exit flags
+// evaluated at each bar's close — the same point the script evaluates its
+// (long-only) signals in a backtest.
 function computeSignals(candles, cfg) {
   const n = candles.length;
   const d = cfg.DMI;
@@ -71,6 +78,8 @@ function computeSignals(candles, cfg) {
   });
   const adx = ema(dx, d.adxSignalLength).map((x) => (ok(x) ? 100 * x : null));
   const smoothMinus = sma(minus, d.smoothMinusPeriod);
+  // Mirror of smoothMinus for the short side — not in the original script.
+  const smoothPlus = sma(plus, d.smoothMinusPeriod);
   const smoothADX = sma(adx, d.smoothAdxPeriod);
 
   const sma21 = sma(close, 21);
@@ -78,48 +87,80 @@ function computeSignals(candles, cfg) {
   const volSma21 = sma(candles.map((k) => k.v), 21);
   const thirty = constant(n, 30);
 
-  let candleCounter = 0;
-  let bullishPattern = false;
+  let candleCounterUp = 0, candleCounterDown = 0;
+  let bullishPattern = false, bearishPattern = false;
   const out = [];
 
   for (let i = 0; i < n; i++) {
     const bullishDI = crossover(plus, smoothMinus, i);
     const bearishDI = crossunder(plus, smoothMinus, i);
+    // Mirror: -DI crossing smoothed +DI, the short-side equivalent of bullishDI/bearishDI.
+    const bearishDI2 = crossover(minus, smoothPlus, i);
+    const bullishDI2 = crossunder(minus, smoothPlus, i);
 
-    if (bullishDI) candleCounter = 1;
-    else if (bearishDI) candleCounter = 0;
-    else if (candleCounter > 0) candleCounter++;
+    if (bullishDI) candleCounterUp = 1;
+    else if (bearishDI) candleCounterUp = 0;
+    else if (candleCounterUp > 0) candleCounterUp++;
+
+    if (bearishDI2) candleCounterDown = 1;
+    else if (bullishDI2) candleCounterDown = 0;
+    else if (candleCounterDown > 0) candleCounterDown++;
 
     if (bullishDI) bullishPattern = true;
     if (bullishPattern && bearishDI) bullishPattern = false;
 
+    if (bearishDI2) bearishPattern = true;
+    if (bearishPattern && bullishDI2) bearishPattern = false;
+
     // Pine comparisons against na are false, so a missing SMA fails its check.
-    const mandatory =
-      bullishPattern && candleCounter <= cfg.MAX_CANDLES_SINCE_PLUS_CROSS &&
+    const mandatoryLong =
+      bullishPattern && candleCounterUp <= cfg.MAX_CANDLES_SINCE_PLUS_CROSS &&
       (!cfg.REQUIRE_PRICE_BELOW_SMA21 || (ok(sma21[i]) && close[i] < sma21[i])) &&
       (!cfg.REQUIRE_PRICE_ABOVE_SMA200 || (ok(sma200[i]) && close[i] > sma200[i])) &&
       (!cfg.REQUIRE_VOLUME_ABOVE_SMA21 || (ok(volSma21[i]) && candles[i].v > volSma21[i])) &&
       (!cfg.REQUIRE_BULL_PATTERN || bullishPattern);
 
-    const triggers = [];
-    if (cfg.ENTRY_PLUS_DI_CROSS_30 && crossover(plus, thirty, i)) triggers.push('+DI crossed above 30');
-    if (cfg.ENTRY_SMOOTH_ADX_CROSS_SMOOTH_MINUS && crossover(smoothADX, smoothMinus, i)) triggers.push('smooth ADX crossed above smooth -DI');
+    const mandatoryShort = cfg.ALLOW_SHORTS &&
+      bearishPattern && candleCounterDown <= cfg.MAX_CANDLES_SINCE_MINUS_CROSS &&
+      (!cfg.REQUIRE_PRICE_ABOVE_SMA21 || (ok(sma21[i]) && close[i] > sma21[i])) &&
+      (!cfg.REQUIRE_PRICE_BELOW_SMA200 || (ok(sma200[i]) && close[i] < sma200[i])) &&
+      (!cfg.REQUIRE_VOLUME_ABOVE_SMA21 || (ok(volSma21[i]) && candles[i].v > volSma21[i])) &&
+      (!cfg.REQUIRE_BEAR_PATTERN || bearishPattern);
 
-    let exitReason = null;
-    if (cfg.EXIT_ON_BEARISH_DI && bearishDI) exitReason = '+DI crossed under -DI';
+    const longTriggers = [];
+    if (cfg.ENTRY_PLUS_DI_CROSS_30 && crossover(plus, thirty, i)) longTriggers.push('+DI crossed above 30');
+    if (cfg.ENTRY_SMOOTH_ADX_CROSS_SMOOTH_MINUS && crossover(smoothADX, smoothMinus, i)) longTriggers.push('smooth ADX crossed above smooth -DI');
+
+    const shortTriggers = [];
+    if (cfg.ALLOW_SHORTS) {
+      if (cfg.ENTRY_MINUS_DI_CROSS_30 && crossover(minus, thirty, i)) shortTriggers.push('-DI crossed above 30');
+      if (cfg.ENTRY_SMOOTH_ADX_CROSS_SMOOTH_PLUS && crossover(smoothADX, smoothPlus, i)) shortTriggers.push('smooth ADX crossed above smooth +DI');
+    }
+
+    let exitLongReason = null;
+    if (cfg.EXIT_ON_BEARISH_DI && bearishDI) exitLongReason = '+DI crossed under -DI';
     else if (cfg.EXIT_ON_ADX_REVERSAL && crossunder(adx, smoothADX, i) && adx[i] > cfg.MIN_ADX_FOR_REVERSAL_EXIT) {
-      exitReason = `ADX trend reversal (ADX ${adx[i].toFixed(1)} crossed under smooth ADX)`;
+      exitLongReason = `ADX trend reversal (ADX ${adx[i].toFixed(1)} crossed under smooth ADX)`;
+    }
+
+    let exitShortReason = null;
+    if (cfg.EXIT_ON_BULLISH_DI && bullishDI2) exitShortReason = '-DI crossed under +DI';
+    else if (cfg.EXIT_ON_ADX_REVERSAL && crossunder(adx, smoothADX, i) && adx[i] > cfg.MIN_ADX_FOR_REVERSAL_EXIT) {
+      exitShortReason = `ADX trend reversal (ADX ${adx[i].toFixed(1)} crossed under smooth ADX)`;
     }
 
     out.push({
       t: candles[i].t,
       close: close[i],
-      plus: plus[i], minus: minus[i], adx: adx[i], smoothADX: smoothADX[i], smoothMinus: smoothMinus[i],
+      plus: plus[i], minus: minus[i], adx: adx[i], smoothADX: smoothADX[i], smoothMinus: smoothMinus[i], smoothPlus: smoothPlus[i],
       sma200: sma200[i],
-      bullishPattern, candleCounter,
-      entry: mandatory && triggers.length > 0,
-      entryReason: triggers.join(' + '),
-      exitReason,
+      bullishPattern, bearishPattern, candleCounterUp, candleCounterDown,
+      longEntry: mandatoryLong && longTriggers.length > 0,
+      longEntryReason: longTriggers.join(' + '),
+      shortEntry: mandatoryShort && shortTriggers.length > 0,
+      shortEntryReason: shortTriggers.join(' + '),
+      exitLongReason,
+      exitShortReason,
     });
   }
   return out;

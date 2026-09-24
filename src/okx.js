@@ -1,5 +1,4 @@
-// OKX public market data (no API key). Spot USDT pairs, since the strategy
-// is long-only and unleveraged — the same thing TradingView's tester models.
+// OKX public market data (no API key) for USDT-margined perpetual swaps.
 'use strict';
 
 const BASE = 'https://www.okx.com';
@@ -20,9 +19,10 @@ async function api(path, tries = 4) {
   }
 }
 
-const instId = (symbol) => `${symbol}-USDT`;
-// OKX rows: [ts, o, h, l, c, vol(base), volCcy, volCcyQuote, confirm]
-const parse = (k) => ({ t: +k[0], o: +k[1], h: +k[2], l: +k[3], c: +k[4], v: +k[5], closed: k[8] === '1' });
+const BAR_MS = { '1H': 3.6e6, '2H': 7.2e6, '4H': 1.44e7, '6H': 2.16e7, '12H': 4.32e7, '1D': 8.64e7 };
+const instId = (symbol) => `${symbol}-USDT-SWAP`;
+// OKX swap rows: [ts, o, h, l, c, vol(contracts), volCcy(base coin), volCcyQuote, confirm]
+const parse = (k) => ({ t: +k[0], o: +k[1], h: +k[2], l: +k[3], c: +k[4], v: +k[6], closed: k[8] === '1' });
 
 // Returns up to `count` candles oldest-first. The newest one is usually the
 // still-forming bar (closed: false) — callers use it only for its open.
@@ -40,4 +40,4 @@ async function getCandles(symbol, bar, count, { until = 0, pauseMs = 0 } = {}) {
   return all.slice(0, count).reverse();
 }
 
-module.exports = { getCandles, instId };
+module.exports = { getCandles, instId, BAR_MS };

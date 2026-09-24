@@ -6,7 +6,7 @@
 'use strict';
 
 const config = require('../config');
-const { getCandles } = require('./okx');
+const { getCandles, BAR_MS } = require('./okx');
 const { computeSignals } = require('./dmi');
 const broker = require('./broker');
 const state = require('./state');
@@ -34,6 +34,10 @@ async function runSymbol(symbol, st) {
   for (let i = start; i < closed.length; i++) {
     const next = closed[i + 1] || forming;
     if (!next) break; // no next-bar open yet to fill at — pick this bar up next run
+    for (const ev of broker.holdBar(book, closed[i], config, symbol, BAR_MS[config.TIMEFRAME])) {
+      events.push(ev);
+      st.trades.push(ev);
+    }
     for (const ev of broker.step(book, sigs[i], { price: next.o, t: next.t }, config, symbol)) {
       events.push(ev);
       if (ev.type === 'exit') st.trades.push(ev);
@@ -49,13 +53,16 @@ async function runSymbol(symbol, st) {
     close: s.close,
     price,
     plusDI: round(s.plus), minusDI: round(s.minus), adx: round(s.adx),
-    smoothADX: round(s.smoothADX), smoothMinusDI: round(s.smoothMinus),
+    smoothADX: round(s.smoothADX), smoothMinusDI: round(s.smoothMinus), smoothPlusDI: round(s.smoothPlus),
     sma200: s.sma200,
     aboveSma200: s.sma200 !== null && s.close > s.sma200,
     bullishPattern: s.bullishPattern,
-    candlesSinceCross: s.candleCounter,
-    entrySignal: s.entry,
-    exitSignal: s.exitReason,
+    bearishPattern: s.bearishPattern,
+    candlesSinceCross: book.side === -1 ? s.candleCounterDown : s.candleCounterUp,
+    longEntrySignal: s.longEntry,
+    shortEntrySignal: s.shortEntry,
+    exitSignal: book.side === 1 ? s.exitLongReason : book.side === -1 ? s.exitShortReason : null,
+    side: book.side,
     equity: book.cash + broker.openProfit(book, price),
   };
   if (!events.length) {
@@ -66,10 +73,9 @@ async function runSymbol(symbol, st) {
 
 function summary(s, book) {
   const di = `+DI ${round(s.plus)} / -DI ${round(s.minus)} / ADX ${round(s.adx)}`;
-  if (book.entries.length) return `${book.entries.length} layer(s) open — ${di}`;
+  if (book.entries.length) return `${book.side === 1 ? 'long' : 'short'} ${book.entries.length} layer(s) open — ${di}`;
   const why = [];
-  if (!s.bullishPattern) why.push('+DI below smooth -DI');
-  if (s.sma200 !== null && s.close <= s.sma200) why.push('price under 200 SMA');
+  if (!s.bullishPattern && !s.bearishPattern) why.push('no +DI/-DI pattern');
   return `${why.length ? why.join(', ') : 'waiting for a trigger'} — ${di}`;
 }
 
@@ -89,11 +95,11 @@ async function main() {
   }
   state.saveState(st);
 
-  console.log(`\n=== DMI Toolbox bot (${config.TIMEFRAME}) @ ${new Date().toISOString()} ===\n`);
+  console.log(`\n=== DMI Toolbox bot (OKX perps ${config.LEVERAGE}x, ${config.TIMEFRAME}) @ ${new Date().toISOString()} ===\n`);
   for (const ev of all) {
     const tag = `[${ev.symbol}]`.padEnd(7);
-    if (ev.type === 'enter') console.log(`${tag} BUY layer ${ev.layer}/${config.PYRAMIDING} @ ${fmt(ev.price)} ($${ev.notional.toFixed(2)}) — ${ev.reason}`);
-    else if (ev.type === 'exit') console.log(`${tag} SELL ${ev.entries} layer(s) @ ${fmt(ev.price)} | ${money(ev.pnl)} (${ev.pnlPct.toFixed(2)}%) — ${ev.reason}`);
+    if (ev.type === 'enter') console.log(`${tag} ${ev.side === 1 ? 'LONG' : 'SHORT'} layer ${ev.layer}/${config.PYRAMIDING} @ ${fmt(ev.price)} — $${ev.notional.toFixed(2)} at ${ev.leverage}x ($${ev.margin.toFixed(2)} margin) — ${ev.reason}`);
+    else if (ev.type === 'exit') console.log(`${tag} CLOSE ${ev.side === 1 ? 'LONG' : 'SHORT'} ${ev.entries} layer(s) @ ${fmt(ev.price)} | ${money(ev.pnl)} (${ev.pnlPct.toFixed(2)}% on margin) — ${ev.reason}`);
     else if (ev.type === 'error') console.log(`${tag} ERROR — ${ev.reason}`);
     else console.log(`${tag} ${ev.type} — ${ev.reason}`);
   }
