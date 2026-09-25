@@ -1,5 +1,5 @@
 {
-  "cash": 1899.5,
+  "cash": 1899.4481294833379,
   "positions": {
     "SUI": {
       "symbol": "SUI",
@@ -31,7 +31,7 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5,
-      "funding": 0
+      "funding": 0.05187051666212658
     }
   }
 }
