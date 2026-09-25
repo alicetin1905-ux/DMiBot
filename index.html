@@ -84,6 +84,13 @@
   .coin .sym{ font-weight:700; font-size:13px; }
   .coin .px{ font-family:var(--mono); font-size:11.5px; color:var(--text-secondary); }
   .coin .posPill{ margin-top:7px; display:flex; align-items:center; gap:6px; font-family:var(--mono); font-size:10.5px; }
+  .readyRow{ margin-top:8px; }
+  .readyLabel{ display:flex; justify-content:space-between; font-family:var(--mono); font-size:9px; letter-spacing:0.03em; color:var(--text-tertiary); margin-bottom:3px; }
+  .readyTrack{ height:5px; border-radius:3px; background:var(--panel2); overflow:hidden; }
+  .readyFill{ height:100%; border-radius:3px; }
+  .readyFill.long{ background:var(--up); }
+  .readyFill.short{ background:var(--down); }
+  .readyFill.hot{ box-shadow:0 0 6px currentColor; }
   .chips{ display:flex; flex-wrap:wrap; gap:4px; margin-top:8px; }
   .chip{ font-family:var(--mono); font-size:9px; font-weight:700; letter-spacing:0.04em; padding:2px 6px; border-radius:5px; background:var(--panel2); color:var(--text-tertiary); }
   .chip.on{ color:var(--up); background:rgba(53,255,176,0.1); }
@@ -264,9 +271,18 @@
           '<div class="dmi">+DI ' + sig.plusDI + ' · −DI ' + sig.minusDI + ' · ADX ' + sig.adx + '</div>'
         : '<div class="dmi">waiting for first run</div>';
 
+      var ready = '';
+      if (!p && sig) {
+        var longPct = sig.longReadyPct || 0, shortPct = sig.shortReadyPct || 0;
+        var dir = shortPct > longPct ? 'short' : 'long';
+        var readyPct = dir === 'short' ? shortPct : longPct;
+        ready = '<div class="readyRow"><div class="readyLabel"><span>' + (dir === 'short' ? 'SHORT' : 'LONG') + ' READINESS</span><span>' + readyPct + '%</span></div>' +
+          '<div class="readyTrack"><div class="readyFill ' + dir + (readyPct >= 90 ? ' hot' : '') + '" style="width:' + readyPct + '%"></div></div></div>';
+      }
+
       return '<div class="coin' + (p ? ' inpos ' + (p.side === 1 ? 'long' : 'short') : '') + '">' +
         '<div class="top"><span class="sym">' + s + '</span><span class="px">' + (px ? price(px) : '—') + '</span></div>' +
-        pill + chips + '</div>';
+        pill + chips + ready + '</div>';
     }).join('');
     $('coins').innerHTML = coinHtml;
 

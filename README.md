@@ -112,6 +112,22 @@ All of this is in `config.js`: `TOTAL_BALANCE`, `MARGIN_PER_TRADE`,
 The live bot and the backtester both drive the same broker
 (`src/broker.js`), so they trade identically.
 
+## Readiness bar
+
+Each coin tile without an open position shows a bar for whichever side
+(long or short) is closer to firing, blending:
+- the pattern gate (must be true, or the bar is 0 — no pattern, no setup),
+- the price-vs-200-SMA and volume-vs-average gates,
+- how close the relevant DI/ADX line sits to the level it needs to cross.
+
+The last part is a *symmetric* distance to the trigger level, not a ratio —
+100% right at the level, falling off moving away in either direction —
+because triggers fire on the bar a line actually crosses, so sitting far
+past a level isn't "more ready," it already fired or missed its moment.
+It's a glanceable heuristic for "keep an eye on this one," not a
+prediction: computed in `src/dmi.js` (`longReadyPct`/`shortReadyPct`) and
+carried into `state/signals.json` by the live bot.
+
 ## Coins
 
 The top 20 by market cap (CoinGecko, Sep 2026) that OKX lists as a USDT

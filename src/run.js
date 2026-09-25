@@ -67,9 +67,12 @@ async function runSymbol(symbol, st) {
     aboveSma200: s.sma200 !== null && s.close > s.sma200,
     bullishPattern: s.bullishPattern,
     bearishPattern: s.bearishPattern,
+    volAboveAvg: s.volAboveAvg,
     candlesSinceCross: position && position.side === -1 ? s.candleCounterDown : s.candleCounterUp,
     longEntrySignal: s.longEntry,
     shortEntrySignal: s.shortEntry,
+    longReadyPct: s.longReadyPct,
+    shortReadyPct: s.shortReadyPct,
     exitSignal: position ? (position.side === 1 ? s.exitLongReason : s.exitShortReason) : null,
     side: position ? position.side : 0,
   };

@@ -137,6 +137,43 @@ function computeSignals(candles, cfg) {
       if (cfg.ENTRY_SMOOTH_ADX_CROSS_SMOOTH_PLUS && crossover(smoothADX, smoothPlus, i)) shortTriggers.push('smooth ADX crossed above smooth +DI');
     }
 
+    const volAboveAvg = ok(volSma21[i]) && candles[i].v > volSma21[i];
+
+    // How close each side is to actually firing, for the dashboard's
+    // readiness bar — not part of the strategy logic itself. Requires the
+    // pattern gate first (with no pattern there's no setup at all), then
+    // blends the remaining mandatory gates with how close the trigger lines
+    // sit to each other right now.
+    //
+    // A trigger only fires on the bar a line actually crosses its level —
+    // sitting far past it isn't "more ready" (it already fired, or missed
+    // its moment and needs a pullback-and-recross). So this uses symmetric
+    // distance to the level, not a ratio: 100% exactly at the level, falling
+    // off on either side, which reads as "how live is this trigger right
+    // now" whether it's about to cross up into range or has just crossed.
+    const closeness = (value, level, scale) => (ok(value) && scale > 0 ? Math.max(0, 100 - (Math.abs(value - level) / scale) * 100) : 0);
+    const longTriggerPct = Math.max(
+      cfg.ENTRY_PLUS_DI_CROSS_30 ? closeness(plus[i], 30, 30) : 0,
+      cfg.ENTRY_SMOOTH_ADX_CROSS_SMOOTH_MINUS ? closeness(smoothADX[i], smoothMinus[i], Math.max(smoothMinus[i], 5)) : 0,
+    );
+    const shortTriggerPct = cfg.ALLOW_SHORTS ? Math.max(
+      cfg.ENTRY_MINUS_DI_CROSS_30 ? closeness(minus[i], 30, 30) : 0,
+      cfg.ENTRY_SMOOTH_ADX_CROSS_SMOOTH_PLUS ? closeness(smoothADX[i], smoothPlus[i], Math.max(smoothPlus[i], 5)) : 0,
+    ) : 0;
+    const longGates = [
+      !cfg.REQUIRE_PRICE_ABOVE_SMA200 || (ok(sma200[i]) && close[i] > sma200[i]),
+      !cfg.REQUIRE_VOLUME_ABOVE_SMA21 || volAboveAvg,
+      longTriggerPct / 100,
+    ];
+    const shortGates = [
+      !cfg.REQUIRE_PRICE_BELOW_SMA200 || (ok(sma200[i]) && close[i] < sma200[i]),
+      !cfg.REQUIRE_VOLUME_ABOVE_SMA21 || volAboveAvg,
+      shortTriggerPct / 100,
+    ];
+    const avg = (gates) => (gates.reduce((s, g) => s + (g === true ? 1 : g === false ? 0 : g), 0) / gates.length) * 100;
+    const longReadyPct = bullishPattern ? Math.round(avg(longGates)) : 0;
+    const shortReadyPct = cfg.ALLOW_SHORTS && bearishPattern ? Math.round(avg(shortGates)) : 0;
+
     let exitLongReason = null;
     if (cfg.EXIT_ON_BEARISH_DI && bearishDI) exitLongReason = '+DI crossed under -DI';
     else if (cfg.EXIT_ON_ADX_REVERSAL && crossunder(adx, smoothADX, i) && adx[i] > cfg.MIN_ADX_FOR_REVERSAL_EXIT) {
@@ -161,6 +198,7 @@ function computeSignals(candles, cfg) {
       shortEntryReason: shortTriggers.join(' + '),
       exitLongReason,
       exitShortReason,
+      volAboveAvg, longReadyPct, shortReadyPct,
     });
   }
   return out;
