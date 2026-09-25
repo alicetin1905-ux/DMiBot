@@ -45,6 +45,26 @@
   .stat .k{ font-size:9.5px; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-tertiary); }
   .stat .v{ font-family:var(--mono); font-size:16px; font-weight:700; margin-top:3px; }
 
+  .posGrid{ display:grid; grid-template-columns:1fr; gap:10px; }
+  @media (min-width:640px){ .posGrid{ grid-template-columns:repeat(2, minmax(0, 1fr)); } }
+  .posCard{ background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:14px; }
+  .posCard.long{ border-color:rgba(53,255,176,0.35); }
+  .posCard.short{ border-color:rgba(255,77,106,0.35); }
+  .posCard .posHead{ display:flex; align-items:center; justify-content:space-between; gap:8px; }
+  .posCard .posSymWrap{ display:flex; align-items:center; gap:7px; }
+  .posCard .posSym{ font-weight:700; font-size:15px; }
+  .posBadge{ font-family:var(--mono); font-size:9.5px; font-weight:700; letter-spacing:0.07em; padding:2px 7px; border-radius:5px; }
+  .posBadge.long{ color:var(--up); background:rgba(53,255,176,0.12); }
+  .posBadge.short{ color:var(--down); background:rgba(255,77,106,0.12); }
+  .posCard .posAge{ font-family:var(--mono); font-size:10px; color:var(--text-tertiary); }
+  .posCard .markRow{ margin-top:11px; display:flex; align-items:baseline; gap:9px; flex-wrap:wrap; }
+  .posCard .markPrice{ font-family:var(--mono); font-size:20px; font-weight:700; }
+  .posCard .markPnl{ font-family:var(--mono); font-size:12.5px; font-weight:600; }
+  .posStats{ margin-top:11px; padding-top:11px; border-top:1px solid var(--border); display:grid; grid-template-columns:repeat(3, 1fr); gap:9px 6px; }
+  .posStats .k{ font-size:9px; letter-spacing:0.07em; text-transform:uppercase; color:var(--text-tertiary); }
+  .posStats .v{ font-family:var(--mono); font-size:11.5px; margin-top:2px; }
+  .posStats .stat.warn .v{ color:var(--warn); }
+
   .grid{ display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:10px; }
   @media (min-width:620px){ .grid{ grid-template-columns:repeat(3, minmax(0, 1fr)); } }
   @media (min-width:860px){ .grid{ grid-template-columns:repeat(4, minmax(0, 1fr)); } }
@@ -112,6 +132,9 @@
   </div>
 </div>
 
+<h2>Open positions</h2>
+<div id="openPositions" class="posGrid"><div class="card"><div class="empty">Loading…</div></div></div>
+
 <h2>Performance</h2>
 <div class="card" id="perf"><div class="empty">Loading…</div></div>
 
@@ -177,6 +200,7 @@
 
   function render(books, trades, signals, prices, bt) {
     var total = 0, realised = 0, unreal = 0, openCount = 0;
+    var openPositions = [];
     var coinHtml = SYMBOLS.map(function (s) {
       var b = books[s] || { cash: BALANCE, entries: [] };
       var sig = signals[s] || null;
@@ -186,10 +210,17 @@
       var open = px ? qty * px - cost : 0;
       var eq = b.cash + open;
       total += eq; realised += b.cash - BALANCE; unreal += open;
-      if (b.entries.length) openCount++;
-
       var side = b.side || (sig && sig.side) || 0;
       var liq = qty ? (cost - side * b.cash) / (qty * (MAINT_MARGIN - side)) : 0;
+      if (b.entries.length) {
+        openCount++;
+        openPositions.push({
+          symbol: s, side: side, layers: b.entries.length, avgEntry: cost / qty,
+          qty: qty, notional: cost, margin: cost / LEVERAGE, px: px,
+          open: open, liq: liq, openedAt: b.entries[0].t, funding: b.funding || 0,
+          equity: eq,
+        });
+      }
       var pos = b.entries.length
         ? '<div class="pos"><b>' + (side === 1 ? 'LONG' : 'SHORT') + ' ' + LEVERAGE + 'x</b> ' + b.entries.length + '/' + PYRAMIDING + ' layers · avg ' + price(cost / qty) +
           '<br>size ' + money(cost) + ' · margin ' + money(cost / LEVERAGE) +
@@ -244,8 +275,43 @@
         '<span class="pnl ' + cls(t.pnl) + '">' + signed(t.pnl) + '</span></div>';
     }).join('') : '<div class="empty">No closed trades yet. A long needs +DI above −DI, price over its 200 SMA, above-average volume and a trigger; a short is the mirror image.</div>';
 
+    renderOpenPositions(openPositions);
     renderBacktest(bt);
   }
+
+  function renderOpenPositions(positions) {
+    if (!positions.length) {
+      $('openPositions').innerHTML = '<div class="card"><div class="empty">No open positions right now.</div></div>';
+      return;
+    }
+    positions.sort(function (a, b) { return b.openedAt - a.openedAt; });
+    $('openPositions').innerHTML = positions.map(function (p) {
+      var roe = p.open / p.margin * 100;
+      var liqDist = p.px ? (p.liq / p.px - 1) * 100 * (p.side === 1 ? -1 : 1) : null; // % adverse move still needed
+      return '<div class="posCard ' + (p.side === 1 ? 'long' : 'short') + '">' +
+        '<div class="posHead"><div class="posSymWrap">' +
+          '<span class="posSym">' + esc(p.symbol) + '</span>' +
+          '<span class="posBadge ' + (p.side === 1 ? 'long' : 'short') + '">' + (p.side === 1 ? 'LONG' : 'SHORT') + ' ' + LEVERAGE + 'x</span>' +
+        '</div><span class="posAge">opened ' + ago(p.openedAt) + '</span></div>' +
+        '<div class="markRow">' +
+          '<span class="markPrice">' + (p.px ? price(p.px) : '—') + '</span>' +
+          '<span class="markPnl ' + cls(p.open) + '">' + signed(p.open) + ' (' + pct(roe, 1) + ' ROE)</span>' +
+        '</div>' +
+        '<div class="posStats">' +
+          posStat('Layers', p.layers + '/' + PYRAMIDING) +
+          posStat('Avg entry', price(p.avgEntry)) +
+          posStat('Qty', p.qty.toLocaleString('en-US', { maximumFractionDigits: 4 })) +
+          posStat('Notional', money(p.notional)) +
+          posStat('Margin', money(p.margin)) +
+          posStat('Coin equity', money(p.equity)) +
+          posStat('Liquidation', p.liq > 0 ? price(p.liq) : '—', true) +
+          posStat('Room to liq', liqDist != null ? Math.abs(liqDist).toFixed(1) + '% away' : '—', true) +
+          posStat('Funding paid', signed(-p.funding)) +
+        '</div></div>';
+    }).join('');
+  }
+
+  function posStat(k, v, warn) { return '<div class="stat' + (warn ? ' warn' : '') + '"><div class="k">' + k + '</div><div class="v">' + v + '</div></div>'; }
 
   function stat(k, v) { return '<div class="stat"><div class="k">' + k + '</div><div class="v">' + v + '</div></div>'; }
 
