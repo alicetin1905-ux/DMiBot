@@ -8,7 +8,7 @@ const path = require('path');
 const broker = require('./broker');
 
 const DIR = path.join(__dirname, '..', 'state');
-const NAMES = ['books', 'lastBar', 'trades', 'signals'];
+const NAMES = ['account', 'lastBar', 'trades', 'signals'];
 
 function read(name, fallback) {
   try {
@@ -19,10 +19,8 @@ function read(name, fallback) {
 }
 
 function loadState(config) {
-  const books = read('books', {});      // symbol -> { cash, entries: [{ qty, price, t, fee }] }
-  for (const s of config.SYMBOLS) if (!books[s]) books[s] = broker.newBook(config.BALANCE_PER_SYMBOL);
   return {
-    books,
+    account: read('account', null) || broker.newAccount(config.TOTAL_BALANCE), // { cash, positions: { SYMBOL: position } }
     lastBar: read('lastBar', {}),       // symbol -> open time (ms) of the last closed bar processed
     trades: read('trades', []),         // append-only closed-trade log
     signals: read('signals', {}),       // symbol -> latest indicator snapshot, for the dashboard

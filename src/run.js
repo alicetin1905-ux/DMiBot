@@ -3,6 +3,14 @@
 // Toolbox signals over them, feeds each newly closed bar through the paper
 // broker, and saves state. Safe to run as often as you like: a bar is only
 // ever processed once (tracked in state/lastBar.json).
+//
+// All coins share one account (state.account) — margin for a new trade on
+// one coin comes out of the same free cash every other coin draws from.
+// Coins are still processed one at a time here (simplest for the live bot,
+// and correct almost always); the backtester instead walks every coin in
+// strict timestamp order, which matters more when replaying a lot of
+// history where several coins' entries could otherwise race for margin in
+// an order that wouldn't have actually happened live.
 'use strict';
 
 const config = require('../config');
@@ -21,7 +29,7 @@ async function runSymbol(symbol, st) {
   if (closed.length < 250) return [{ type: 'skip', symbol, reason: `only ${closed.length} closed candles of history` }];
 
   const sigs = computeSignals(closed, config);
-  const book = st.books[symbol];
+  const account = st.account;
   const last = st.lastBar[symbol];
 
   // First run for a coin (or after a long pause): start from the latest
@@ -34,11 +42,11 @@ async function runSymbol(symbol, st) {
   for (let i = start; i < closed.length; i++) {
     const next = closed[i + 1] || forming;
     if (!next) break; // no next-bar open yet to fill at — pick this bar up next run
-    for (const ev of broker.holdBar(book, closed[i], config, symbol, BAR_MS[config.TIMEFRAME])) {
+    for (const ev of broker.holdBar(account, symbol, closed[i], config, BAR_MS[config.TIMEFRAME])) {
       events.push(ev);
-      st.trades.push(ev);
+      if (ev.type === 'exit') st.trades.push(ev);
     }
-    for (const ev of broker.step(book, sigs[i], { price: next.o, t: next.t }, config, symbol)) {
+    for (const ev of broker.step(account, symbol, sigs[i], { price: next.o, t: next.t }, config)) {
       events.push(ev);
       if (ev.type === 'exit') st.trades.push(ev);
     }
@@ -47,6 +55,7 @@ async function runSymbol(symbol, st) {
 
   const s = sigs[sigs.length - 1];
   const price = forming ? forming.c : s.close;
+  const position = account.positions[symbol] || null;
   st.signals[symbol] = {
     at: new Date().toISOString(),
     barTime: s.t,
@@ -58,22 +67,21 @@ async function runSymbol(symbol, st) {
     aboveSma200: s.sma200 !== null && s.close > s.sma200,
     bullishPattern: s.bullishPattern,
     bearishPattern: s.bearishPattern,
-    candlesSinceCross: book.side === -1 ? s.candleCounterDown : s.candleCounterUp,
+    candlesSinceCross: position && position.side === -1 ? s.candleCounterDown : s.candleCounterUp,
     longEntrySignal: s.longEntry,
     shortEntrySignal: s.shortEntry,
-    exitSignal: book.side === 1 ? s.exitLongReason : book.side === -1 ? s.exitShortReason : null,
-    side: book.side,
-    equity: book.cash + broker.openProfit(book, price),
+    exitSignal: position ? (position.side === 1 ? s.exitLongReason : s.exitShortReason) : null,
+    side: position ? position.side : 0,
   };
   if (!events.length) {
-    events.push({ type: book.entries.length ? 'hold' : 'flat', symbol, reason: summary(s, book) });
+    events.push({ type: position ? 'hold' : 'flat', symbol, reason: summary(s, position) });
   }
   return events;
 }
 
-function summary(s, book) {
+function summary(s, position) {
   const di = `+DI ${round(s.plus)} / -DI ${round(s.minus)} / ADX ${round(s.adx)}`;
-  if (book.entries.length) return `${book.side === 1 ? 'long' : 'short'} ${book.entries.length} layer(s) open — ${di}`;
+  if (position) return `${position.side === 1 ? 'long' : 'short'} ${position.qty.toFixed(4)} open — ${di}`;
   const why = [];
   if (!s.bullishPattern && !s.bearishPattern) why.push('no +DI/-DI pattern');
   return `${why.length ? why.join(', ') : 'waiting for a trigger'} — ${di}`;
@@ -98,16 +106,22 @@ async function main() {
   console.log(`\n=== DMI Toolbox bot (OKX perps ${config.LEVERAGE}x, ${config.TIMEFRAME}) @ ${new Date().toISOString()} ===\n`);
   for (const ev of all) {
     const tag = `[${ev.symbol}]`.padEnd(7);
-    if (ev.type === 'enter') console.log(`${tag} ${ev.side === 1 ? 'LONG' : 'SHORT'} layer ${ev.layer}/${config.PYRAMIDING} @ ${fmt(ev.price)} — $${ev.notional.toFixed(2)} at ${ev.leverage}x ($${ev.margin.toFixed(2)} margin) — ${ev.reason}`);
-    else if (ev.type === 'exit') console.log(`${tag} CLOSE ${ev.side === 1 ? 'LONG' : 'SHORT'} ${ev.entries} layer(s) @ ${fmt(ev.price)} | ${money(ev.pnl)} (${ev.pnlPct.toFixed(2)}% on margin) — ${ev.reason}`);
+    if (ev.type === 'enter') console.log(`${tag} ${ev.side === 1 ? 'LONG' : 'SHORT'} @ ${fmt(ev.price)} — $${ev.notional.toFixed(2)} at ${ev.leverage}x ($${ev.margin.toFixed(2)} margin) — ${ev.reason}`);
+    else if (ev.type === 'partial') console.log(`${tag} ${ev.side === 1 ? 'LONG' : 'SHORT'} closed ${ev.qty.toFixed(4)} @ ${fmt(ev.price)} | ${money(ev.pnl)} — ${ev.reason}`);
+    else if (ev.type === 'exit') console.log(`${tag} FLAT — total ${money(ev.pnl)} (${ev.pnlPct.toFixed(2)}% on margin) — ${ev.reason}`);
     else if (ev.type === 'error') console.log(`${tag} ERROR — ${ev.reason}`);
     else console.log(`${tag} ${ev.type} — ${ev.reason}`);
   }
 
-  let total = 0;
-  for (const s of config.SYMBOLS) total += st.signals[s] ? st.signals[s].equity : st.books[s].cash;
-  const start = config.SYMBOLS.length * config.BALANCE_PER_SYMBOL;
-  console.log(`\nTOTAL equity $${total.toFixed(2)} (started $${start}, ${money(total - start)})`);
+  const openSymbols = Object.keys(st.account.positions);
+  const openMargin = openSymbols.reduce((s, sym) => s + st.account.positions[sym].margin * (st.account.positions[sym].qty / st.account.positions[sym].initialQty), 0);
+  const unrealized = openSymbols.reduce((s, sym) => {
+    const p = st.account.positions[sym];
+    const price = st.signals[sym] ? st.signals[sym].price : p.entryPrice;
+    return s + broker.openProfit(p, price);
+  }, 0);
+  const equity = st.account.cash + openMargin + unrealized;
+  console.log(`\nTotal equity $${equity.toFixed(2)} (started $${config.TOTAL_BALANCE}, ${money(equity - config.TOTAL_BALANCE)}) — free cash $${st.account.cash.toFixed(2)}, $${openMargin.toFixed(2)} margin in ${openSymbols.length} open position(s)`);
 }
 
 main().catch((err) => { console.error(err); process.exit(1); });

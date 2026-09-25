@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="DMI Bot">
+<meta name="theme-color" content="#070a09">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <title>DMI Toolbox Bot</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -64,19 +68,22 @@
   .posStats .k{ font-size:9px; letter-spacing:0.07em; text-transform:uppercase; color:var(--text-tertiary); }
   .posStats .v{ font-family:var(--mono); font-size:11.5px; margin-top:2px; }
   .posStats .stat.warn .v{ color:var(--warn); }
+  .tpRow{ margin-top:11px; padding-top:11px; border-top:1px solid var(--border); font-family:var(--mono); font-size:10.5px; color:var(--text-secondary); display:flex; flex-wrap:wrap; gap:10px; }
+  .tpRow .tp{ display:flex; align-items:center; gap:5px; }
+  .tpDot{ width:7px; height:7px; border-radius:50%; background:var(--panel2); border:1px solid var(--border); flex:0 0 auto; }
+  .tpDot.done{ background:var(--up); border-color:var(--up); }
+  .tpDot.be{ background:var(--warn); border-color:var(--warn); }
 
   .grid{ display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:10px; }
   @media (min-width:620px){ .grid{ grid-template-columns:repeat(3, minmax(0, 1fr)); } }
   @media (min-width:860px){ .grid{ grid-template-columns:repeat(4, minmax(0, 1fr)); } }
   .coin{ background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:12px; min-width:0; }
-  .coin.inpos{ border-color:rgba(53,255,176,0.35); }
+  .coin.inpos.long{ border-color:rgba(53,255,176,0.35); }
+  .coin.inpos.short{ border-color:rgba(255,77,106,0.35); }
   .coin .top{ display:flex; justify-content:space-between; align-items:baseline; gap:6px; }
   .coin .sym{ font-weight:700; font-size:13px; }
-  .coin .px{ font-family:var(--mono); font-size:10.5px; color:var(--text-tertiary); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .coin .bal{ font-family:var(--mono); font-size:16px; margin-top:6px; }
-  .coin .pnl{ font-family:var(--mono); font-size:11px; margin-top:2px; }
-  .coin .pos{ margin-top:8px; padding-top:8px; border-top:1px solid var(--border); font-family:var(--mono); font-size:10.5px; color:var(--text-secondary); line-height:1.6; }
-  .coin .pos b{ color:var(--up); }
+  .coin .px{ font-family:var(--mono); font-size:11.5px; color:var(--text-secondary); }
+  .coin .posPill{ margin-top:7px; display:flex; align-items:center; gap:6px; font-family:var(--mono); font-size:10.5px; }
   .chips{ display:flex; flex-wrap:wrap; gap:4px; margin-top:8px; }
   .chip{ font-family:var(--mono); font-size:9px; font-weight:700; letter-spacing:0.04em; padding:2px 6px; border-radius:5px; background:var(--panel2); color:var(--text-tertiary); }
   .chip.on{ color:var(--up); background:rgba(53,255,176,0.1); }
@@ -115,8 +122,10 @@
 <div class="banner">
   <b>Paper trading only</b>: no API keys, no exchange account, no real orders. The bot runs Chart0bserver's
   <a href="https://www.tradingview.com/script/kgsU4SHu-DMI-Toolbox-Strategy/" target="_blank" rel="noopener" style="color:var(--bot)">DMI Toolbox Strategy</a>
-  with its default settings on OKX USDT perpetual futures at <b>10x leverage</b>, and tracks a simulated $1,000 per coin.
-  At 10x, one bad candle can liquidate a coin's whole balance.
+  for its entry signals, but sizing and exits are this project's own risk model, run on OKX USDT perpetual
+  futures at <b>10x leverage</b>: one shared $2,000 account, a fixed $100 margin per trade, a hard $35 stop,
+  and a 3-tier scaled take-profit (1.5R/3R/4.5R, closing 30/30/40%). No coin has its own balance, and at
+  most <b>6 positions</b> are open at once across all 20 coins.
 </div>
 
 <div class="totalCard">
@@ -124,6 +133,7 @@
     <div class="label">Total equity</div>
     <div class="value" id="totalValue">—</div>
     <div class="pnl flat" id="totalPnl">—</div>
+    <div class="breakdown" id="totalBreakdown" style="font-family:var(--mono); font-size:10.5px; color:var(--text-tertiary); margin-top:5px;"></div>
   </div>
   <div style="text-align:right">
     <div class="label">Started</div>
@@ -158,9 +168,12 @@
 
   // Keep in step with config.js.
   var SYMBOLS = ['BTC','ETH','BNB','XRP','SOL','TRX','ZEC','HYPE','DOGE','LINK','ADA','XLM','BCH','NEAR','UNI','LTC','AVAX','SUI','HBAR','SHIB'];
-  var BALANCE = 1000;
+  var TOTAL_BALANCE = 2000;
+  var MARGIN_PER_TRADE = 100;
+  var MAX_OPEN_POSITIONS = 6;
+  var STOP_LOSS_USD = 35;
+  var TP_LEVELS = [{ r: 1.5, closePct: 30 }, { r: 3, closePct: 30 }, { r: 4.5, closePct: 40 }];
   var TIMEFRAME = '4H';
-  var PYRAMIDING = 5;
   var LEVERAGE = 10;
   var MAINT_MARGIN = 0.005;
 
@@ -198,35 +211,48 @@
     } catch (e) { return {}; }
   }
 
-  function render(books, trades, signals, prices, bt) {
-    var total = 0, realised = 0, unreal = 0, openCount = 0;
-    var openPositions = [];
-    var coinHtml = SYMBOLS.map(function (s) {
-      var b = books[s] || { cash: BALANCE, entries: [] };
+  function openProfit(p, px) { return p.side * p.qty * (px - p.entryPrice); }
+  function remainingMargin(p) { return p.margin * (p.qty / p.initialQty); }
+  function liqPrice(p) {
+    var side = p.side, cost = p.qty * p.entryPrice, m = remainingMargin(p);
+    return (m - side * cost) / (p.qty * (MAINT_MARGIN - side));
+  }
+
+  function render(account, trades, signals, prices, bt) {
+    account = account || { cash: TOTAL_BALANCE, positions: {} };
+    var positions = account.positions || {};
+    var openSymbols = Object.keys(positions);
+    var marginUsed = 0, unreal = 0;
+    var openPositions = openSymbols.map(function (s) {
+      var p = positions[s];
       var sig = signals[s] || null;
+      var px = prices[s] || (sig ? sig.price : p.entryPrice);
+      var m = remainingMargin(p);
+      var open = openProfit(p, px);
+      marginUsed += m; unreal += open;
+      return { p: p, symbol: s, px: px, margin: m, open: open };
+    });
+
+    var realised = trades.reduce(function (s, t) { return s + t.pnl; }, 0);
+    var total = account.cash + marginUsed + unreal;
+
+    $('totalValue').textContent = money(total);
+    $('totalPnl').textContent = signed(total - TOTAL_BALANCE) + ' · ' + pct((total / TOTAL_BALANCE - 1) * 100);
+    $('totalPnl').className = 'pnl ' + cls(total - TOTAL_BALANCE);
+    $('totalBreakdown').textContent = 'free cash ' + money(account.cash) + ' · ' + money(marginUsed) + ' margin in ' + openSymbols.length + ' position' + (openSymbols.length === 1 ? '' : 's');
+    $('startedValue').textContent = money(TOTAL_BALANCE);
+
+    var coinHtml = SYMBOLS.map(function (s) {
+      var sig = signals[s] || null;
+      var p = positions[s] || null;
       var px = prices[s] || (sig ? sig.price : null);
-      var qty = 0, cost = 0;
-      b.entries.forEach(function (e) { qty += e.qty; cost += e.qty * e.price; });
-      var open = px ? qty * px - cost : 0;
-      var eq = b.cash + open;
-      total += eq; realised += b.cash - BALANCE; unreal += open;
-      var side = b.side || (sig && sig.side) || 0;
-      var liq = qty ? (cost - side * b.cash) / (qty * (MAINT_MARGIN - side)) : 0;
-      if (b.entries.length) {
-        openCount++;
-        openPositions.push({
-          symbol: s, side: side, layers: b.entries.length, avgEntry: cost / qty,
-          qty: qty, notional: cost, margin: cost / LEVERAGE, px: px,
-          open: open, liq: liq, openedAt: b.entries[0].t, funding: b.funding || 0,
-          equity: eq,
-        });
+      var pill = '';
+      if (p) {
+        var open = openProfit(p, px || p.entryPrice);
+        var roe = open / remainingMargin(p) * 100;
+        pill = '<div class="posPill"><span class="posBadge ' + (p.side === 1 ? 'long' : 'short') + '">' + (p.side === 1 ? 'LONG' : 'SHORT') + '</span>' +
+          '<span class="' + cls(open) + '">' + signed(open) + ' (' + pct(roe, 1) + ')</span></div>';
       }
-      var pos = b.entries.length
-        ? '<div class="pos"><b>' + (side === 1 ? 'LONG' : 'SHORT') + ' ' + LEVERAGE + 'x</b> ' + b.entries.length + '/' + PYRAMIDING + ' layers · avg ' + price(cost / qty) +
-          '<br>size ' + money(cost) + ' · margin ' + money(cost / LEVERAGE) +
-          '<br>open <span class="' + cls(open) + '">' + signed(open) + ' (' + pct(open / (cost / LEVERAGE) * 100) + ' ROE)</span>' +
-          '<br><span class="warnTxt">liq ' + (liq > 0 ? price(liq) + (px ? ' (' + pct((liq / px - 1) * 100, 1) + ')' : '') : '—') + '</span></div>'
-        : '';
       var chips = sig
         ? '<div class="chips">' +
             (sig.longEntrySignal ? '<span class="chip sig">LONG ENTRY</span>' : '') +
@@ -238,19 +264,11 @@
           '<div class="dmi">+DI ' + sig.plusDI + ' · −DI ' + sig.minusDI + ' · ADX ' + sig.adx + '</div>'
         : '<div class="dmi">waiting for first run</div>';
 
-      return '<div class="coin' + (b.entries.length ? ' inpos' : '') + '">' +
+      return '<div class="coin' + (p ? ' inpos ' + (p.side === 1 ? 'long' : 'short') : '') + '">' +
         '<div class="top"><span class="sym">' + s + '</span><span class="px">' + (px ? price(px) : '—') + '</span></div>' +
-        '<div class="bal">' + money(eq) + '</div>' +
-        '<div class="pnl ' + cls(eq - BALANCE) + '">' + signed(eq - BALANCE) + ' · ' + pct((eq / BALANCE - 1) * 100) + '</div>' +
-        pos + chips + '</div>';
+        pill + chips + '</div>';
     }).join('');
     $('coins').innerHTML = coinHtml;
-
-    var start = SYMBOLS.length * BALANCE;
-    $('totalValue').textContent = money(total);
-    $('totalPnl').textContent = signed(total - start) + ' · ' + pct((total / start - 1) * 100);
-    $('totalPnl').className = 'pnl ' + cls(total - start);
-    $('startedValue').textContent = money(start);
 
     var wins = trades.filter(function (t) { return t.pnl > 0; });
     var gw = wins.reduce(function (s, t) { return s + t.pnl; }, 0);
@@ -260,17 +278,17 @@
       stat('Closed trades', trades.length) +
       stat('Win rate', trades.length ? (wins.length / trades.length * 100).toFixed(0) + '%' : '—') +
       stat('Profit factor', pf) +
-      stat('Open positions', openCount + ' / ' + SYMBOLS.length) +
+      stat('Open positions', openSymbols.length + ' / ' + MAX_OPEN_POSITIONS + ' slots') +
       stat('Realised P&amp;L', '<span class="' + cls(realised) + '">' + signed(realised) + '</span>') +
       stat('Unrealised P&amp;L', '<span class="' + cls(unreal) + '">' + signed(unreal) + '</span>') +
       stat('Timeframe', TIMEFRAME) +
-      stat('Sizing', '10% × ' + PYRAMIDING + ' @ ' + LEVERAGE + 'x') +
+      stat('Risk per trade', '$' + MARGIN_PER_TRADE + ' @ ' + LEVERAGE + 'x, $' + STOP_LOSS_USD + ' stop') +
       '</div>';
 
     var recent = trades.slice(-25).reverse();
     $('trades').innerHTML = recent.length ? recent.map(function (t) {
       return '<div class="trade"><span class="sym">' + esc(t.symbol) + '</span>' +
-        '<span class="reason" title="' + esc(t.reason) + '">' + t.entries + '× @ ' + price(t.avgEntry) + ' → ' + price(t.price) + ' · ' + pct(t.pnlPct, 1) + ' ROE · ' + esc(t.reason) + '</span>' +
+        '<span class="reason" title="' + esc(t.reason) + '">' + (t.side === 1 ? 'long' : 'short') + ' ' + price(t.avgEntry) + ' → ' + price(t.price) + ' · ' + esc(t.reason) + '</span>' +
         '<span class="when">' + ago(t.closedAt) + '</span>' +
         '<span class="pnl ' + cls(t.pnl) + '">' + signed(t.pnl) + '</span></div>';
     }).join('') : '<div class="empty">No closed trades yet. A long needs +DI above −DI, price over its 200 SMA, above-average volume and a trigger; a short is the mirror image.</div>';
@@ -284,30 +302,35 @@
       $('openPositions').innerHTML = '<div class="card"><div class="empty">No open positions right now.</div></div>';
       return;
     }
-    positions.sort(function (a, b) { return b.openedAt - a.openedAt; });
-    $('openPositions').innerHTML = positions.map(function (p) {
-      var roe = p.open / p.margin * 100;
-      var liqDist = p.px ? (p.liq / p.px - 1) * 100 * (p.side === 1 ? -1 : 1) : null; // % adverse move still needed
+    positions.sort(function (a, b) { return b.p.t - a.p.t; });
+    $('openPositions').innerHTML = positions.map(function (o) {
+      var p = o.p, px = o.px, roe = o.open / o.margin * 100;
+      var liq = liqPrice(p);
+      var liqDist = px ? (liq / px - 1) * 100 * (p.side === 1 ? -1 : 1) : null;
+      var tpDots = p.tp.map(function (t, i) {
+        var cls2 = t.done ? 'done' : '';
+        return '<span class="tp"><span class="tpDot ' + cls2 + '"></span>TP' + (i + 1) + ' ' + price(t.price) + (t.done ? ' ✓' : '') + '</span>';
+      }).join('');
       return '<div class="posCard ' + (p.side === 1 ? 'long' : 'short') + '">' +
         '<div class="posHead"><div class="posSymWrap">' +
-          '<span class="posSym">' + esc(p.symbol) + '</span>' +
+          '<span class="posSym">' + esc(o.symbol) + '</span>' +
           '<span class="posBadge ' + (p.side === 1 ? 'long' : 'short') + '">' + (p.side === 1 ? 'LONG' : 'SHORT') + ' ' + LEVERAGE + 'x</span>' +
-        '</div><span class="posAge">opened ' + ago(p.openedAt) + '</span></div>' +
+        '</div><span class="posAge">opened ' + ago(p.t) + '</span></div>' +
         '<div class="markRow">' +
-          '<span class="markPrice">' + (p.px ? price(p.px) : '—') + '</span>' +
-          '<span class="markPnl ' + cls(p.open) + '">' + signed(p.open) + ' (' + pct(roe, 1) + ' ROE)</span>' +
+          '<span class="markPrice">' + (px ? price(px) : '—') + '</span>' +
+          '<span class="markPnl ' + cls(o.open) + '">' + signed(o.open) + ' (' + pct(roe, 1) + ' ROE)</span>' +
         '</div>' +
         '<div class="posStats">' +
-          posStat('Layers', p.layers + '/' + PYRAMIDING) +
-          posStat('Avg entry', price(p.avgEntry)) +
-          posStat('Qty', p.qty.toLocaleString('en-US', { maximumFractionDigits: 4 })) +
-          posStat('Notional', money(p.notional)) +
-          posStat('Margin', money(p.margin)) +
-          posStat('Coin equity', money(p.equity)) +
-          posStat('Liquidation', p.liq > 0 ? price(p.liq) : '—', true) +
+          posStat('Entry', price(p.entryPrice)) +
+          posStat('Qty left', (p.qty / p.initialQty * 100).toFixed(0) + '% of size') +
+          posStat('Margin left', money(o.margin)) +
+          posStat('Stop', price(p.stopPrice) + (p.stopMovedToBE ? ' (BE)' : ''), true) +
+          posStat('Liquidation', price(liq), true) +
           posStat('Room to liq', liqDist != null ? Math.abs(liqDist).toFixed(1) + '% away' : '—', true) +
           posStat('Funding paid', signed(-p.funding)) +
-        '</div></div>';
+        '</div>' +
+        '<div class="tpRow">' + tpDots + '</div>' +
+        '</div>';
     }).join('');
   }
 
@@ -317,30 +340,40 @@
 
   function renderBacktest(bt) {
     if (!bt || !bt.rows) { $('backtest').innerHTML = '<div class="empty">No backtest results published yet.</div>'; return; }
-    var rows = bt.rows.slice().sort(function (a, b) { return b.netPct - a.netPct; });
-    var avg = function (k) { return bt.rows.reduce(function (s, r) { return s + r[k]; }, 0) / bt.rows.length; };
+    var rows = bt.rows.slice().sort(function (a, b) { return b.pnl - a.pnl; });
     var body = rows.map(function (r) {
       return '<tr><td>' + esc(r.symbol) + '</td>' +
-        '<td class="' + cls(r.netPct) + '">' + pct(r.netPct, 1) + '</td>' +
+        '<td class="' + cls(r.pnl) + '">' + signed(r.pnl) + '</td>' +
         '<td class="' + cls(r.buyHoldPct) + '">' + pct(r.buyHoldPct, 1) + '</td>' +
         '<td>' + r.trades + ' (' + (r.longTrades || 0) + '/' + (r.shortTrades || 0) + ')</td><td>' + r.winRate.toFixed(0) + '%</td>' +
-        '<td>' + (r.profitFactor == null ? '∞' : r.profitFactor.toFixed(2)) + '</td>' +
-        '<td>' + r.maxDDPct.toFixed(1) + '%</td><td>' + (r.liquidations || 0) + '</td></tr>';
+        '<td>' + (r.profitFactor == null || r.profitFactor === Infinity ? '∞' : r.profitFactor.toFixed(2)) + '</td>' +
+        '<td>' + r.stopOuts + '</td><td>' + (r.liquidations || 0) + '</td>' +
+        '<td>' + r.tp1 + '/' + r.tp2 + '/' + r.tp3 + '</td></tr>';
     }).join('');
-    $('backtest').innerHTML = '<div class="tableWrap"><table>' +
-      '<thead><tr><th>Coin</th><th>Net</th><th>Buy &amp; hold</th><th>Trades (L/S)</th><th>Win</th><th>PF</th><th>Max DD</th><th>Liq</th></tr></thead>' +
+    var totalPnl = bt.rows.reduce(function (s, r) { return s + r.pnl; }, 0);
+    var totalLiq = bt.rows.reduce(function (s, r) { return s + (r.liquidations || 0); }, 0);
+    var tp = function (k) { return bt.rows.reduce(function (s, r) { return s + r[k]; }, 0); };
+    $('backtest').innerHTML =
+      '<div class="statGrid">' +
+        stat('Account', (bt.totalBalance || TOTAL_BALANCE) + ' → ' + Math.round(bt.finalEquity)) +
+        stat('Net return', '<span class="' + cls(bt.netPct) + '">' + pct(bt.netPct, 1) + '</span>') +
+        stat('Max drawdown', bt.maxDDPct.toFixed(1) + '%') +
+        stat('Liquidations', bt.liquidations) +
+      '</div>' +
+      '<div class="tableWrap"><table>' +
+      '<thead><tr><th>Coin</th><th>P&amp;L</th><th>Buy &amp; hold</th><th>Trades (L/S)</th><th>Win</th><th>PF</th><th>Stop</th><th>Liq</th><th>TP1/2/3</th></tr></thead>' +
       '<tbody>' + body + '</tbody>' +
-      '<tfoot><tr><td>Avg</td><td class="' + cls(avg('netPct')) + '">' + pct(avg('netPct'), 1) + '</td><td class="' + cls(avg('buyHoldPct')) + '">' + pct(avg('buyHoldPct'), 1) + '</td><td></td><td></td><td></td><td>' + avg('maxDDPct').toFixed(1) + '%</td><td>' + bt.rows.reduce(function (s, r) { return s + (r.liquidations || 0); }, 0) + '</td></tr></tfoot>' +
+      '<tfoot><tr><td>Total</td><td class="' + cls(totalPnl) + '">' + signed(totalPnl) + '</td><td></td><td></td><td></td><td></td><td></td><td>' + totalLiq + '</td><td>' + tp('tp1') + '/' + tp('tp2') + '/' + tp('tp3') + '</td></tr></tfoot>' +
       '</table></div>' +
-      '<div class="note">OKX perpetuals, long' + (bt.allowShorts !== false ? ' &amp; short' : ' only') + ', at ' + (bt.leverage || LEVERAGE) + 'x, ' + esc(bt.tf) + ' candles, last ' + bt.days + ' days, $1,000 per coin, ' + (bt.feePct != null ? bt.feePct : 0.05) + '% fee per side, ' + (bt.fundingPctPer8h != null ? bt.fundingPctPer8h : 0.01) + '% funding per 8h. ' +
-      'Buy &amp; hold is the unleveraged coin price change. Backtests are not a forecast, and leverage magnifies losses exactly as much as gains.</div>';
+      '<div class="note">OKX perpetuals, long' + (bt.allowShorts !== false ? ' &amp; short' : ' only') + ', at ' + (bt.leverage || LEVERAGE) + 'x, ' + esc(bt.tf) + ' candles, last ' + bt.days + ' days. Shared $' + (bt.totalBalance || TOTAL_BALANCE) + ' account, $' + (bt.marginPerTrade || MARGIN_PER_TRADE) + ' margin per trade, max ' + (bt.maxOpenPositions || MAX_OPEN_POSITIONS) + ' open at once, $' + (bt.stopLossUsd || STOP_LOSS_USD) + ' stop, TP at ' + (bt.tpLevels || TP_LEVELS).map(function (l) { return l.r + 'R/' + l.closePct + '%'; }).join(', ') + ', ' + (bt.feePct != null ? bt.feePct : 0.05) + '% fee per side, ' + (bt.fundingPctPer8h != null ? bt.fundingPctPer8h : 0.01) + '% funding per 8h. ' +
+      'Buy &amp; hold is the unleveraged coin price change over the same window, for reference only — it is not what this strategy risks. Backtests are not a forecast.</div>';
   }
 
   async function load() {
     $('updated').textContent = 'Loading…';
     try {
       var res = await Promise.all([
-        getJson(RAW + 'state/books.json').catch(function () { return {}; }),
+        getJson(RAW + 'state/account.json').catch(function () { return null; }),
         getJson(RAW + 'state/trades.json').catch(function () { return []; }),
         getJson(RAW + 'state/signals.json').catch(function () { return {}; }),
         livePrices(),
