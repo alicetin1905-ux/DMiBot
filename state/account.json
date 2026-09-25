@@ -1,4 +1,37 @@
 {
-  "cash": 2000,
-  "positions": {}
+  "cash": 1899.5,
+  "positions": {
+    "SUI": {
+      "symbol": "SUI",
+      "side": 1,
+      "qty": 908.0177971488241,
+      "initialQty": 908.0177971488241,
+      "entryPrice": 1.1013,
+      "t": 1790352000000,
+      "margin": 100,
+      "stopPrice": 1.0627545,
+      "initialStopPrice": 1.0627545,
+      "tp": [
+        {
+          "price": 1.15911825,
+          "pct": 30,
+          "done": false
+        },
+        {
+          "price": 1.2169364999999999,
+          "pct": 30,
+          "done": false
+        },
+        {
+          "price": 1.27475475,
+          "pct": 40,
+          "done": false
+        }
+      ],
+      "stopMovedToBE": false,
+      "legs": [],
+      "entryFee": 0.5,
+      "funding": 0
+    }
+  }
 }
