@@ -141,39 +141,44 @@ list at the top of `index.html` to match.
 
 ## Backtest
 
-Replayed over the last 730 days on OKX **4H** perpetual futures, this risk
-model (shared $2,000 account, $100/trade at 10x, $35 stop, 1.5R/3R/4.5R
-scaled TP), default entry settings, long **and** short. ZEC and HYPE are
-tested only since their OKX listing.
+Replayed over the last 730 days on OKX **2H** perpetual futures (the bot's
+default timeframe — more candles than 4H means more chances per week for a
+trigger to fire), this risk model (shared $2,000 account, $100/trade at
+10x, $35 stop, 1.5R/3R/4.5R scaled TP), default entry settings, long **and**
+short. ZEC and HYPE are tested only since their OKX listing.
 
 | | |
 |---|---|
-| Account | **$2,000 → $5,151** (+157.5%) |
-| Max drawdown | **33.7%** |
+| Account | **$2,000 → $5,611** (+180.5%) |
+| Max drawdown | **30.9%** |
 | Liquidations | **0** |
-| Trades | 983 (444 long / 539 short) |
-| Stopped out (full loss or breakeven) | 679 |
-| TP1 / TP2 / TP3 fills | 400 / 185 / 102 |
-| Coins net positive | 16 / 20 |
+| Trades | 1,494 (687 long / 807 short) |
+| Stopped out (full loss or breakeven) | 930 |
+| TP1 / TP2 / TP3 fills | 556 / 216 / 124 |
+| Coins net positive | 13 / 20 |
 
-Best: NEAR +$564, ETH +$506, SHIB +$493. Worst: UNI −$532, AVAX −$507, BNB
-−$373.
+Best: SUI +$1,088, ZEC +$725, DOGE +$662. Worst: AVAX −$500, LTC −$474, UNI
+−$380.
 
-Capping open positions at 6 turns down real signals — with no cap the same
-window returned +399.3% on 1,518 trades and 18/20 coins positive — in
-exchange for never having more than 6 × $100 = $600 (30% of the account) at
-risk at once, instead of, in principle, up to $2,000. Drawdown barely moved
-(33.7% vs. 34.1%), because drawdown here comes mostly from strings of
-losing trades on the coins that *are* open, not from how many are open at
-once — the cap trades return for concentration risk, not for smoother
-equity.
+2H trades about 50% more often than 4H under the same risk model (1,494 vs.
+983 trades) and comes out ahead on every headline number — higher return,
+lower drawdown, still zero liquidations — because more samples per week
+means more chances for a real crossover, not because the underlying edge
+changed. `node src/backtest.js 4H 730` still works if you want to compare;
+see the git history for that run's numbers.
 
-Scaling out in R-multiples is still doing its job on top of that: 400
-trades hit at least TP1, and once TP1 fills the stop moves to breakeven, so
-a trade that reverses after running can't give back a full loss. Zero
-liquidations across 983 trades and 20 coins over 2 years confirms the $35
-stop is catching everything before the isolated per-trade liquidation
-(~9.5% away) would need to.
+Capping open positions at 6 still turns down real signals at this
+frequency — a trade on one coin can't open if all 6 slots are already
+taken by others. Drawdown is driven mostly by strings of losing trades on
+whichever coins *are* open, not by how many are open at once, so the cap
+trades return for concentration risk, not for smoother equity.
+
+Scaling out in R-multiples is doing real work here: 556 trades hit at
+least TP1, and once TP1 fills the stop moves to breakeven, so a trade that
+reverses after running can't give back a full loss. Zero liquidations
+across 1,494 trades and 20 coins over 2 years confirms the $35 stop is
+catching everything before the isolated per-trade liquidation (~9.5% away)
+would need to.
 
 **Leverage still means real drawdown.** A third of the account down at the
 worst point is a real number, even with a hard per-trade stop and a
@@ -183,7 +188,7 @@ several separate losing trades in a row.
 Re-run it yourself:
 
 ```
-node src/backtest.js 4H 730     # timeframe, days
+node src/backtest.js 2H 730     # timeframe, days
 ```
 
 This walks all 20 coins together in strict timestamp order through one

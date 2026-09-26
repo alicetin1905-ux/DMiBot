@@ -17,7 +17,7 @@ module.exports = {
 
   // OKX bar size signals are read on. The script's author demos it on BTC
   // 2H; see README "Backtest" for how 1H / 2H / 4H compared.
-  TIMEFRAME: '4H',
+  TIMEFRAME: '2H',
 
   // ---- Strategy inputs (script defaults) ----
   DMI: {
