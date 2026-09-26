@@ -10,9 +10,11 @@ module.exports = {
   // Top 20 coins by market cap (CoinGecko, Sep 2026) that OKX lists as a
   // USDT-margined perpetual swap — stablecoins, wrapped/tokenised assets and exchange
   // tokens with no OKX market (USDT, USDC, WBT, LEO, XMR, ...) skipped.
+  // AVAX, LTC and UNI dropped by request — they were 3 of the 4 worst
+  // performers under this risk model on both the 4H and 2H backtests.
   SYMBOLS: [
     'BTC', 'ETH', 'BNB', 'XRP', 'SOL', 'TRX', 'ZEC', 'HYPE', 'DOGE', 'LINK',
-    'ADA', 'XLM', 'BCH', 'NEAR', 'UNI', 'LTC', 'AVAX', 'SUI', 'HBAR', 'SHIB',
+    'ADA', 'XLM', 'BCH', 'NEAR', 'SUI', 'HBAR', 'SHIB',
   ],
 
   // OKX bar size signals are read on. The script's author demos it on BTC
