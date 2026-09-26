@@ -1,21 +1,21 @@
 {
-  "cash": 1899.4481294833379,
+  "cash": 1944.965160049487,
   "positions": {
     "SUI": {
       "symbol": "SUI",
       "side": 1,
-      "qty": 908.0177971488241,
+      "qty": 635.6124580041769,
       "initialQty": 908.0177971488241,
       "entryPrice": 1.1013,
       "t": 1790352000000,
       "margin": 100,
-      "stopPrice": 1.0627545,
+      "stopPrice": 1.1013,
       "initialStopPrice": 1.0627545,
       "tp": [
         {
           "price": 1.15911825,
           "pct": 30,
-          "done": false
+          "done": true
         },
         {
           "price": 1.2169364999999999,
@@ -28,10 +28,18 @@
           "done": false
         }
       ],
-      "stopMovedToBE": false,
-      "legs": [],
+      "stopMovedToBE": true,
+      "legs": [
+        {
+          "qty": 272.4053391446472,
+          "price": 1.15911825,
+          "t": 1790366400000,
+          "reason": "TP1 (1.5R, 30%)",
+          "pnl": 15.592124999999987
+        }
+      ],
       "entryFee": 0.5,
-      "funding": 0.05187051666212658
+      "funding": 0.12696495051303008
     }
   }
 }
