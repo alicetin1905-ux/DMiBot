@@ -29,5 +29,29 @@
       }
     ],
     "reason": "TP1 (1.5R, 30%) + ADX trend reversal (ADX 46.1 crossed under smooth ADX)"
+  },
+  {
+    "type": "exit",
+    "symbol": "ZEC",
+    "side": 1,
+    "qty": 0.6051986564589827,
+    "avgEntry": 1652.35,
+    "price": 1594.51775,
+    "openedAt": 1790517600000,
+    "closedAt": 1790517600000,
+    "pnl": -35.982499999999966,
+    "pnlPct": -35.982499999999966,
+    "leverage": 10,
+    "funding": 0,
+    "legs": [
+      {
+        "qty": 0.6051986564589827,
+        "price": 1594.51775,
+        "t": 1790517600000,
+        "reason": "stop loss (-$35)",
+        "pnl": -35.482499999999966
+      }
+    ],
+    "reason": "stop loss (-$35)"
   }
 ]
