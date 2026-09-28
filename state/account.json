@@ -1,4 +1,45 @@
 {
-  "cash": 2011.228311325252,
-  "positions": {}
+  "cash": 1956.3024947978056,
+  "positions": {
+    "HBAR": {
+      "symbol": "HBAR",
+      "side": 1,
+      "qty": 5966.587112171837,
+      "initialQty": 8523.695874531197,
+      "entryPrice": 0.11732,
+      "t": 1790596800000,
+      "margin": 100,
+      "stopPrice": 0.11732,
+      "initialStopPrice": 0.11321379999999999,
+      "tp": [
+        {
+          "price": 0.12347929999999999,
+          "pct": 30,
+          "done": true
+        },
+        {
+          "price": 0.1296386,
+          "pct": 30,
+          "done": false
+        },
+        {
+          "price": 0.1357979,
+          "pct": 40,
+          "done": false
+        }
+      ],
+      "stopMovedToBE": true,
+      "legs": [
+        {
+          "qty": 2557.108762359359,
+          "price": 0.12347929999999999,
+          "t": 1790596800000,
+          "reason": "TP1 (1.5R, 30%)",
+          "pnl": 15.59212499999998
+        }
+      ],
+      "entryFee": 0.5,
+      "funding": 0.017941527446300714
+    }
+  }
 }
