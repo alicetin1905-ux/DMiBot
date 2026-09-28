@@ -1,45 +1,37 @@
 {
-  "cash": 1956.3024947978056,
+  "cash": 1925.427388675898,
   "positions": {
-    "HBAR": {
-      "symbol": "HBAR",
+    "LINK": {
+      "symbol": "LINK",
       "side": 1,
-      "qty": 5966.587112171837,
-      "initialQty": 8523.695874531197,
-      "entryPrice": 0.11732,
-      "t": 1790596800000,
+      "qty": 66.32619221330503,
+      "initialQty": 66.32619221330503,
+      "entryPrice": 15.077,
+      "t": 1790625600000,
       "margin": 100,
-      "stopPrice": 0.11732,
-      "initialStopPrice": 0.11321379999999999,
+      "stopPrice": 14.549305,
+      "initialStopPrice": 14.549305,
       "tp": [
         {
-          "price": 0.12347929999999999,
-          "pct": 30,
-          "done": true
-        },
-        {
-          "price": 0.1296386,
+          "price": 15.8685425,
           "pct": 30,
           "done": false
         },
         {
-          "price": 0.1357979,
+          "price": 16.660085,
+          "pct": 30,
+          "done": false
+        },
+        {
+          "price": 17.4516275,
           "pct": 40,
           "done": false
         }
       ],
-      "stopMovedToBE": true,
-      "legs": [
-        {
-          "qty": 2557.108762359359,
-          "price": 0.12347929999999999,
-          "t": 1790596800000,
-          "reason": "TP1 (1.5R, 30%)",
-          "pnl": 15.59212499999998
-        }
-      ],
+      "stopMovedToBE": false,
+      "legs": [],
       "entryFee": 0.5,
-      "funding": 0.017941527446300714
+      "funding": 0.02510612190754129
     }
   }
 }
