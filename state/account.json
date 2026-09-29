@@ -1,5 +1,5 @@
 {
-  "cash": 1925.427388675898,
+  "cash": 1925.3765513077215,
   "positions": {
     "LINK": {
       "symbol": "LINK",
@@ -31,7 +31,7 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5,
-      "funding": 0.02510612190754129
+      "funding": 0.07594349008423426
     }
   }
 }
