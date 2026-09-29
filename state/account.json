@@ -1,5 +1,5 @@
 {
-  "cash": 1925.3765513077215,
+  "cash": 1824.8020769427949,
   "positions": {
     "LINK": {
       "symbol": "LINK",
@@ -31,7 +31,39 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5,
-      "funding": 0.07594349008423426
+      "funding": 0.15041785501094385
+    },
+    "ZEC": {
+      "symbol": "ZEC",
+      "side": -1,
+      "qty": 0.7025678856219483,
+      "initialQty": 0.7025678856219483,
+      "entryPrice": 1423.35,
+      "t": 1790668800000,
+      "margin": 100,
+      "stopPrice": 1473.16725,
+      "initialStopPrice": 1473.16725,
+      "tp": [
+        {
+          "price": 1348.6241249999998,
+          "pct": 30,
+          "done": false
+        },
+        {
+          "price": 1273.89825,
+          "pct": 30,
+          "done": false
+        },
+        {
+          "price": 1199.1723749999999,
+          "pct": 40,
+          "done": false
+        }
+      ],
+      "stopMovedToBE": false,
+      "legs": [],
+      "entryFee": 0.5,
+      "funding": 0
     }
   }
 }
