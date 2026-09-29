@@ -1,5 +1,5 @@
 {
-  "cash": 1824.8020769427949,
+  "cash": 1824.8019302658472,
   "positions": {
     "LINK": {
       "symbol": "LINK",
@@ -31,7 +31,7 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5,
-      "funding": 0.15041785501094385
+      "funding": 0.2265586655170127
     },
     "ZEC": {
       "symbol": "ZEC",
@@ -63,7 +63,7 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5,
-      "funding": 0
+      "funding": -0.07599413355815507
     }
   }
 }
