@@ -1,38 +1,6 @@
 {
-  "cash": 1824.8019302658472,
+  "cash": 1688.3687554151836,
   "positions": {
-    "LINK": {
-      "symbol": "LINK",
-      "side": 1,
-      "qty": 66.32619221330503,
-      "initialQty": 66.32619221330503,
-      "entryPrice": 15.077,
-      "t": 1790625600000,
-      "margin": 100,
-      "stopPrice": 14.549305,
-      "initialStopPrice": 14.549305,
-      "tp": [
-        {
-          "price": 15.8685425,
-          "pct": 30,
-          "done": false
-        },
-        {
-          "price": 16.660085,
-          "pct": 30,
-          "done": false
-        },
-        {
-          "price": 17.4516275,
-          "pct": 40,
-          "done": false
-        }
-      ],
-      "stopMovedToBE": false,
-      "legs": [],
-      "entryFee": 0.5,
-      "funding": 0.2265586655170127
-    },
     "ZEC": {
       "symbol": "ZEC",
       "side": -1,
@@ -63,7 +31,71 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5,
-      "funding": -0.07599413355815507
+      "funding": -0.14945937401201392
+    },
+    "XRP": {
+      "symbol": "XRP",
+      "side": 1,
+      "qty": 659.0654451987082,
+      "initialQty": 659.0654451987082,
+      "entryPrice": 1.5173,
+      "t": 1790697600000,
+      "margin": 100,
+      "stopPrice": 1.4641945,
+      "initialStopPrice": 1.4641945,
+      "tp": [
+        {
+          "price": 1.5969582500000001,
+          "pct": 30,
+          "done": false
+        },
+        {
+          "price": 1.6766165000000002,
+          "pct": 30,
+          "done": false
+        },
+        {
+          "price": 1.7562747500000002,
+          "pct": 40,
+          "done": false
+        }
+      ],
+      "stopMovedToBE": false,
+      "legs": [],
+      "entryFee": 0.5,
+      "funding": 0.04900645884136295
+    },
+    "HYPE": {
+      "symbol": "HYPE",
+      "side": -1,
+      "qty": 11.598909702487965,
+      "initialQty": 11.598909702487965,
+      "entryPrice": 86.215,
+      "t": 1790697600000,
+      "margin": 100,
+      "stopPrice": 89.23252500000001,
+      "initialStopPrice": 89.23252500000001,
+      "tp": [
+        {
+          "price": 81.68871250000001,
+          "pct": 30,
+          "done": false
+        },
+        {
+          "price": 77.162425,
+          "pct": 30,
+          "done": false
+        },
+        {
+          "price": 72.6361375,
+          "pct": 40,
+          "done": false
+        }
+      ],
+      "stopMovedToBE": false,
+      "legs": [],
+      "entryFee": 0.5,
+      "funding": -0.04939047729513426
     }
   }
 }
