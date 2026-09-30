@@ -1,5 +1,5 @@
 {
-  "cash": 1688.3687554151836,
+  "cash": 1688.419085218423,
   "positions": {
     "ZEC": {
       "symbol": "ZEC",
@@ -31,7 +31,7 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5,
-      "funding": -0.14945937401201392
+      "funding": -0.19911353497031653
     },
     "XRP": {
       "symbol": "XRP",
@@ -63,7 +63,7 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5,
-      "funding": 0.04900645884136295
+      "funding": 0.09818757002570355
     },
     "HYPE": {
       "symbol": "HYPE",
@@ -95,7 +95,7 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5,
-      "funding": -0.04939047729513426
+      "funding": -0.09924723076030853
     }
   }
 }
