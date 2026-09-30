@@ -1,38 +1,6 @@
 {
-  "cash": 1588.0693771722451,
+  "cash": 1616.435751858296,
   "positions": {
-    "ZEC": {
-      "symbol": "ZEC",
-      "side": -1,
-      "qty": 0.7025678856219483,
-      "initialQty": 0.7025678856219483,
-      "entryPrice": 1423.35,
-      "t": 1790668800000,
-      "margin": 100,
-      "stopPrice": 1473.16725,
-      "initialStopPrice": 1473.16725,
-      "tp": [
-        {
-          "price": 1348.6241249999998,
-          "pct": 30,
-          "done": false
-        },
-        {
-          "price": 1273.89825,
-          "pct": 30,
-          "done": false
-        },
-        {
-          "price": 1199.1723749999999,
-          "pct": 40,
-          "done": false
-        }
-      ],
-      "stopMovedToBE": false,
-      "legs": [],
-      "entryFee": 0.5,
-      "funding": -0.34800101872343414
-    },
     "XRP": {
       "symbol": "XRP",
       "side": 1,
@@ -63,39 +31,7 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5,
-      "funding": 0.2467541026823963
-    },
-    "HYPE": {
-      "symbol": "HYPE",
-      "side": -1,
-      "qty": 11.598909702487965,
-      "initialQty": 11.598909702487965,
-      "entryPrice": 86.215,
-      "t": 1790697600000,
-      "margin": 100,
-      "stopPrice": 89.23252500000001,
-      "initialStopPrice": 89.23252500000001,
-      "tp": [
-        {
-          "price": 81.68871250000001,
-          "pct": 30,
-          "done": false
-        },
-        {
-          "price": 77.162425,
-          "pct": 30,
-          "done": false
-        },
-        {
-          "price": 72.6361375,
-          "pct": 40,
-          "done": false
-        }
-      ],
-      "stopMovedToBE": false,
-      "legs": [],
-      "entryFee": 0.5,
-      "funding": -0.2492182334860523
+      "funding": 0.3212713372437882
     },
     "TRX": {
       "symbol": "TRX",
@@ -127,6 +63,38 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5000000000000001,
+      "funding": 0.07456159675713783
+    },
+    "NEAR": {
+      "symbol": "NEAR",
+      "side": 1,
+      "qty": 186.25442354255915,
+      "initialQty": 186.25442354255915,
+      "entryPrice": 5.369,
+      "t": 1790791200000,
+      "margin": 100,
+      "stopPrice": 5.1810849999999995,
+      "initialStopPrice": 5.1810849999999995,
+      "tp": [
+        {
+          "price": 5.6508725,
+          "pct": 30,
+          "done": false
+        },
+        {
+          "price": 5.932745,
+          "pct": 30,
+          "done": false
+        },
+        {
+          "price": 6.214617499999999,
+          "pct": 40,
+          "done": false
+        }
+      ],
+      "stopMovedToBE": false,
+      "legs": [],
+      "entryFee": 0.5,
       "funding": 0
     }
   }
