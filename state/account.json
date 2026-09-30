@@ -1,5 +1,5 @@
 {
-  "cash": 1688.4942250438487,
+  "cash": 1588.0693771722451,
   "positions": {
     "ZEC": {
       "symbol": "ZEC",
@@ -31,7 +31,7 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5,
-      "funding": -0.27341342607229424
+      "funding": -0.34800101872343414
     },
     "XRP": {
       "symbol": "XRP",
@@ -63,7 +63,7 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5,
-      "funding": 0.17220061952151847
+      "funding": 0.2467541026823963
     },
     "HYPE": {
       "symbol": "HYPE",
@@ -95,7 +95,39 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5,
-      "funding": -0.1741002145798295
+      "funding": -0.2492182334860523
+    },
+    "TRX": {
+      "symbol": "TRX",
+      "side": 1,
+      "qty": 2937.375161555634,
+      "initialQty": 2937.375161555634,
+      "entryPrice": 0.34044,
+      "t": 1790769600000,
+      "margin": 100,
+      "stopPrice": 0.3285246,
+      "initialStopPrice": 0.3285246,
+      "tp": [
+        {
+          "price": 0.3583131,
+          "pct": 30,
+          "done": false
+        },
+        {
+          "price": 0.3761862,
+          "pct": 30,
+          "done": false
+        },
+        {
+          "price": 0.3940593,
+          "pct": 40,
+          "done": false
+        }
+      ],
+      "stopMovedToBE": false,
+      "legs": [],
+      "entryFee": 0.5000000000000001,
+      "funding": 0
     }
   }
 }
