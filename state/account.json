@@ -1,5 +1,5 @@
 {
-  "cash": 1680.5582442765296,
+  "cash": 1680.4108120392755,
   "positions": {
     "XRP": {
       "symbol": "XRP",
@@ -31,7 +31,7 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5,
-      "funding": 0.46894977921307573
+      "funding": 0.5425525604692545
     },
     "TRX": {
       "symbol": "TRX",
@@ -63,7 +63,7 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5000000000000001,
-      "funding": 0.22338077194219247
+      "funding": 0.29721022794031254
     }
   }
 }
