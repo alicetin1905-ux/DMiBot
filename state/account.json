@@ -1,5 +1,5 @@
 {
-  "cash": 1616.287801534835,
+  "cash": 1680.5582442765296,
   "positions": {
     "XRP": {
       "symbol": "XRP",
@@ -31,7 +31,7 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5,
-      "funding": 0.37031569234825007
+      "funding": 0.46894977921307573
     },
     "TRX": {
       "symbol": "TRX",
@@ -63,39 +63,7 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5000000000000001,
-      "funding": 0.12417533192339326
-    },
-    "NEAR": {
-      "symbol": "NEAR",
-      "side": 1,
-      "qty": 186.25442354255915,
-      "initialQty": 186.25442354255915,
-      "entryPrice": 5.369,
-      "t": 1790791200000,
-      "margin": 100,
-      "stopPrice": 5.1810849999999995,
-      "initialStopPrice": 5.1810849999999995,
-      "tp": [
-        {
-          "price": 5.6508725,
-          "pct": 30,
-          "done": false
-        },
-        {
-          "price": 5.932745,
-          "pct": 30,
-          "done": false
-        },
-        {
-          "price": 6.214617499999999,
-          "pct": 40,
-          "done": false
-        }
-      ],
-      "stopMovedToBE": false,
-      "legs": [],
-      "entryFee": 0.5,
-      "funding": 0.049292233190538284
+      "funding": 0.22338077194219247
     }
   }
 }
