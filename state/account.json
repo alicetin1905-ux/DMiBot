@@ -1,38 +1,6 @@
 {
-  "cash": 1241.2021909487455,
+  "cash": 1169.090893786363,
   "positions": {
-    "XRP": {
-      "symbol": "XRP",
-      "side": 1,
-      "qty": 659.0654451987082,
-      "initialQty": 659.0654451987082,
-      "entryPrice": 1.5173,
-      "t": 1790697600000,
-      "margin": 100,
-      "stopPrice": 1.4641945,
-      "initialStopPrice": 1.4641945,
-      "tp": [
-        {
-          "price": 1.5969582500000001,
-          "pct": 30,
-          "done": false
-        },
-        {
-          "price": 1.6766165000000002,
-          "pct": 30,
-          "done": false
-        },
-        {
-          "price": 1.7562747500000002,
-          "pct": 40,
-          "done": false
-        }
-      ],
-      "stopMovedToBE": false,
-      "legs": [],
-      "entryFee": 0.5,
-      "funding": 0.915214525802412
-    },
     "TRX": {
       "symbol": "TRX",
       "side": 1,
@@ -63,7 +31,7 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5000000000000001,
-      "funding": 0.6657553460227942
+      "funding": 0.7148601809423101
     },
     "ETH": {
       "symbol": "ETH",
@@ -95,7 +63,7 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5,
-      "funding": 0.30186609180075263
+      "funding": 0.35122862772987223
     },
     "BTC": {
       "symbol": "BTC",
@@ -127,7 +95,7 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5,
-      "funding": 0.14987259616503118
+      "funding": 0.19894374921481317
     },
     "BNB": {
       "symbol": "BNB",
@@ -159,31 +127,31 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5,
-      "funding": 0.04954825067281815
+      "funding": 0.09861271305907984
     },
-    "SOL": {
-      "symbol": "SOL",
-      "side": 1,
-      "qty": 8.196049504139005,
-      "initialQty": 8.196049504139005,
-      "entryPrice": 122.01,
-      "t": 1790949600000,
+    "XRP": {
+      "symbol": "XRP",
+      "side": -1,
+      "qty": 680.781537204711,
+      "initialQty": 680.781537204711,
+      "entryPrice": 1.4689,
+      "t": 1790971200000,
       "margin": 100,
-      "stopPrice": 117.73965000000001,
-      "initialStopPrice": 117.73965000000001,
+      "stopPrice": 1.5203115,
+      "initialStopPrice": 1.5203115,
       "tp": [
         {
-          "price": 128.415525,
+          "price": 1.3917827500000002,
           "pct": 30,
           "done": false
         },
         {
-          "price": 134.82105,
+          "price": 1.3146655,
           "pct": 30,
           "done": false
         },
         {
-          "price": 141.226575,
+          "price": 1.2375482500000001,
           "pct": 40,
           "done": false
         }
@@ -191,7 +159,39 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5,
-      "funding": 0.049082042455536434
+      "funding": -0.025115732861324798
+    },
+    "ZEC": {
+      "symbol": "ZEC",
+      "side": -1,
+      "qty": 0.7814636814754033,
+      "initialQty": 0.7814636814754033,
+      "entryPrice": 1279.65,
+      "t": 1790971200000,
+      "margin": 100,
+      "stopPrice": 1324.43775,
+      "initialStopPrice": 1324.43775,
+      "tp": [
+        {
+          "price": 1212.4683750000002,
+          "pct": 30,
+          "done": false
+        },
+        {
+          "price": 1145.2867500000002,
+          "pct": 30,
+          "done": false
+        },
+        {
+          "price": 1078.105125,
+          "pct": 40,
+          "done": false
+        }
+      ],
+      "stopMovedToBE": false,
+      "legs": [],
+      "entryFee": 0.5,
+      "funding": -0.02519009104051889
     }
   }
 }
