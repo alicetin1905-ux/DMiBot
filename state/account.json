@@ -1,5 +1,5 @@
 {
-  "cash": 1233.4523999235212,
+  "cash": 1233.2326387410185,
   "positions": {
     "TRX": {
       "symbol": "TRX",
@@ -31,7 +31,7 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5000000000000001,
-      "funding": 0.7639789683938434
+      "funding": 0.837679179884855
     },
     "ETH": {
       "symbol": "ETH",
@@ -63,7 +63,7 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5,
-      "funding": 0.4007355283432601
+      "funding": 0.4751680704951551
     },
     "BTC": {
       "symbol": "BTC",
@@ -95,7 +95,7 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5,
-      "funding": 0.24811363223942268
+      "funding": 0.3219178508447447
     },
     "BNB": {
       "symbol": "BNB",
@@ -127,7 +127,7 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5,
-      "funding": 0.14782775855440217
+      "funding": 0.22147571446879408
     },
     "XRP": {
       "symbol": "XRP",
@@ -159,7 +159,7 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5,
-      "funding": -0.0757097147525359
+      "funding": -0.15153346041255358
     }
   }
 }
