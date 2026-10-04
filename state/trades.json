@@ -276,5 +276,29 @@
       }
     ],
     "reason": "stop loss (-$35)"
+  },
+  {
+    "type": "exit",
+    "symbol": "SUI",
+    "side": 1,
+    "qty": 797.0667941973538,
+    "avgEntry": 1.2546,
+    "price": 1.210689,
+    "openedAt": 1791129600000,
+    "closedAt": 1791129600000,
+    "pnl": -35.98250000000003,
+    "pnlPct": -35.98250000000003,
+    "leverage": 10,
+    "funding": 0,
+    "legs": [
+      {
+        "qty": 797.0667941973538,
+        "price": 1.210689,
+        "t": 1791129600000,
+        "reason": "stop loss (-$35)",
+        "pnl": -35.48250000000003
+      }
+    ],
+    "reason": "stop loss (-$35)"
   }
 ]
