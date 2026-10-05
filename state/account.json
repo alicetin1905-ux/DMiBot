@@ -1,5 +1,5 @@
 {
-  "cash": 1058.7487017544663,
+  "cash": 1103.6244565012935,
   "positions": {
     "TRX": {
       "symbol": "TRX",
@@ -31,7 +31,7 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5000000000000001,
-      "funding": 1.4042452414522384
+      "funding": 1.5275834214545885
     },
     "ETH": {
       "symbol": "ETH",
@@ -63,7 +63,7 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5,
-      "funding": 1.049472267905295
+      "funding": 1.175184090437668
     },
     "BTC": {
       "symbol": "BTC",
@@ -95,7 +95,7 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5,
-      "funding": 0.8918185566986325
+      "funding": 1.0168510692499897
     },
     "BNB": {
       "symbol": "BNB",
@@ -127,7 +127,7 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5,
-      "funding": 0.8009099064462387
+      "funding": 0.9274125336409076
     },
     "DOGE": {
       "symbol": "DOGE",
@@ -159,23 +159,23 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5,
-      "funding": 0.09944969369743534
+      "funding": 0.22393572837711556
     },
     "ADA": {
       "symbol": "ADA",
       "side": 1,
-      "qty": 3849.1147036181683,
+      "qty": 2694.380292532718,
       "initialQty": 3849.1147036181683,
       "entryPrice": 0.2598,
       "t": 1791158400000,
       "margin": 100,
-      "stopPrice": 0.25070699999999996,
+      "stopPrice": 0.2598,
       "initialStopPrice": 0.25070699999999996,
       "tp": [
         {
           "price": 0.27343949999999995,
           "pct": 30,
-          "done": false
+          "done": true
         },
         {
           "price": 0.287079,
@@ -188,10 +188,18 @@
           "done": false
         }
       ],
-      "stopMovedToBE": false,
-      "legs": [],
+      "stopMovedToBE": true,
+      "legs": [
+        {
+          "qty": 1154.7344110854503,
+          "price": 0.27343949999999995,
+          "t": 1791180000000,
+          "reason": "TP1 (1.5R, 30%)",
+          "pnl": 15.592124999999966
+        }
+      ],
       "entryFee": 0.5,
-      "funding": 0.07721324095458046
+      "funding": 0.16851231716705162
     }
   }
 }
