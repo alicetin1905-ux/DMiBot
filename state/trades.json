@@ -324,5 +324,29 @@
       }
     ],
     "reason": "stop loss (-$35)"
+  },
+  {
+    "type": "exit",
+    "symbol": "BNB",
+    "side": 1,
+    "qty": 1.2815583749839805,
+    "avgEntry": 780.3,
+    "price": 787.3,
+    "openedAt": 1790949600000,
+    "closedAt": 1791230400000,
+    "pnl": 6.98858451877483,
+    "pnlPct": 6.988584518774829,
+    "leverage": 10,
+    "funding": 0.9778386518005898,
+    "legs": [
+      {
+        "qty": 1.2815583749839805,
+        "price": 787.3,
+        "t": 1791230400000,
+        "reason": "ADX trend reversal (ADX 42.8 crossed under smooth ADX)",
+        "pnl": 8.46642317057542
+      }
+    ],
+    "reason": "ADX trend reversal (ADX 42.8 crossed under smooth ADX)"
   }
 ]
