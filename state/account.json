@@ -1,5 +1,5 @@
 {
-  "cash": 1195.9184347078683,
+  "cash": 1059.2012089403395,
   "positions": {
     "TRX": {
       "symbol": "TRX",
@@ -31,7 +31,7 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5000000000000001,
-      "funding": 1.2811523322758782
+      "funding": 1.330409910703795
     },
     "ETH": {
       "symbol": "ETH",
@@ -63,7 +63,7 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5,
-      "funding": 0.9237964670933709
+      "funding": 0.9740556567991225
     },
     "BTC": {
       "symbol": "BTC",
@@ -95,7 +95,7 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5,
-      "funding": 0.766581895568987
+      "funding": 0.8166917344835448
     },
     "BNB": {
       "symbol": "BNB",
@@ -127,31 +127,31 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5,
-      "funding": 0.6736831987697041
+      "funding": 0.7245482506728183
     },
-    "XRP": {
-      "symbol": "XRP",
-      "side": -1,
-      "qty": 680.781537204711,
-      "initialQty": 680.781537204711,
-      "entryPrice": 1.4689,
-      "t": 1790971200000,
+    "DOGE": {
+      "symbol": "DOGE",
+      "side": 1,
+      "qty": 10383.137784238395,
+      "initialQty": 10383.137784238395,
+      "entryPrice": 0.09631,
+      "t": 1791151200000,
       "margin": 100,
-      "stopPrice": 1.5203115,
-      "initialStopPrice": 1.5203115,
+      "stopPrice": 0.09293915000000001,
+      "initialStopPrice": 0.09293915000000001,
       "tp": [
         {
-          "price": 1.3917827500000002,
+          "price": 0.101366275,
           "pct": 30,
           "done": false
         },
         {
-          "price": 1.3146655,
+          "price": 0.10642255,
           "pct": 30,
           "done": false
         },
         {
-          "price": 1.2375482500000001,
+          "price": 0.111478825,
           "pct": 40,
           "done": false
         }
@@ -159,7 +159,39 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5,
-      "funding": -0.6088025052760568
+      "funding": 0.024896168622157613
+    },
+    "ADA": {
+      "symbol": "ADA",
+      "side": 1,
+      "qty": 3849.1147036181683,
+      "initialQty": 3849.1147036181683,
+      "entryPrice": 0.2598,
+      "t": 1791158400000,
+      "margin": 100,
+      "stopPrice": 0.25070699999999996,
+      "initialStopPrice": 0.25070699999999996,
+      "tp": [
+        {
+          "price": 0.27343949999999995,
+          "pct": 30,
+          "done": false
+        },
+        {
+          "price": 0.287079,
+          "pct": 30,
+          "done": false
+        },
+        {
+          "price": 0.3007185,
+          "pct": 40,
+          "done": false
+        }
+      ],
+      "stopMovedToBE": false,
+      "legs": [],
+      "entryFee": 0.5,
+      "funding": 0
     }
   }
 }
