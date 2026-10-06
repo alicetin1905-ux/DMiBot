@@ -1,5 +1,5 @@
 {
-  "cash": 1303.1861875581003,
+  "cash": 1302.7894502918,
   "positions": {
     "TRX": {
       "symbol": "TRX",
@@ -31,7 +31,7 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5000000000000001,
-      "funding": 1.6509788802725889
+      "funding": 1.749687169545295
     },
     "ETH": {
       "symbol": "ETH",
@@ -63,7 +63,7 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5,
-      "funding": 1.3006111654369272
+      "funding": 1.400732565116899
     },
     "BTC": {
       "symbol": "BTC",
@@ -95,7 +95,7 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5,
-      "funding": 1.1414199725940712
+      "funding": 1.241007022478445
     },
     "DOGE": {
       "symbol": "DOGE",
@@ -127,7 +127,7 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5,
-      "funding": 0.3475210258540131
+      "funding": 0.44584155331741254
     }
   }
 }
