@@ -348,5 +348,36 @@
       }
     ],
     "reason": "ADX trend reversal (ADX 42.8 crossed under smooth ADX)"
+  },
+  {
+    "type": "exit",
+    "symbol": "ADA",
+    "side": 1,
+    "qty": 3849.1147036181683,
+    "avgEntry": 0.2598,
+    "price": 0.26963185,
+    "openedAt": 1791158400000,
+    "closedAt": 1791252000000,
+    "pnl": 36.566323421863046,
+    "pnlPct": 36.566323421863046,
+    "leverage": 10,
+    "funding": 0.2586730177059277,
+    "legs": [
+      {
+        "qty": 1154.7344110854503,
+        "price": 0.27343949999999995,
+        "t": 1791180000000,
+        "reason": "TP1 (1.5R, 30%)",
+        "pnl": 15.592124999999966
+      },
+      {
+        "qty": 2694.380292532718,
+        "price": 0.268,
+        "t": 1791252000000,
+        "reason": "ADX trend reversal (ADX 44.9 crossed under smooth ADX)",
+        "pnl": 21.732871439569013
+      }
+    ],
+    "reason": "TP1 (1.5R, 30%) + ADX trend reversal (ADX 44.9 crossed under smooth ADX)"
   }
 ]
