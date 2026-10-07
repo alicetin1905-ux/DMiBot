@@ -1,5 +1,5 @@
 {
-  "cash": 1201.5952637925266,
+  "cash": 1029.207484888037,
   "positions": {
     "TRX": {
       "symbol": "TRX",
@@ -31,39 +31,7 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5000000000000001,
-      "funding": 1.9220942016214317
-    },
-    "ETH": {
-      "symbol": "ETH",
-      "side": 1,
-      "qty": 0.37040329510771325,
-      "initialQty": 0.37040329510771325,
-      "entryPrice": 2699.76,
-      "t": 1790877600000,
-      "margin": 100,
-      "stopPrice": 2605.2684000000004,
-      "initialStopPrice": 2605.2684000000004,
-      "tp": [
-        {
-          "price": 2841.4974,
-          "pct": 30,
-          "done": false
-        },
-        {
-          "price": 2983.2348,
-          "pct": 30,
-          "done": false
-        },
-        {
-          "price": 3124.9722,
-          "pct": 40,
-          "done": false
-        }
-      ],
-      "stopMovedToBE": false,
-      "legs": [],
-      "entryFee": 0.5,
-      "funding": 1.5758494273565051
+      "funding": 2.019983697567854
     },
     "BTC": {
       "symbol": "BTC",
@@ -95,39 +63,7 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5,
-      "funding": 1.415649587980476
-    },
-    "DOGE": {
-      "symbol": "DOGE",
-      "side": 1,
-      "qty": 10383.137784238395,
-      "initialQty": 10383.137784238395,
-      "entryPrice": 0.09631,
-      "t": 1791151200000,
-      "margin": 100,
-      "stopPrice": 0.09293915000000001,
-      "initialStopPrice": 0.09293915000000001,
-      "tp": [
-        {
-          "price": 0.101366275,
-          "pct": 30,
-          "done": false
-        },
-        {
-          "price": 0.10642255,
-          "pct": 30,
-          "done": false
-        },
-        {
-          "price": 0.111478825,
-          "pct": 40,
-          "done": false
-        }
-      ],
-      "stopMovedToBE": false,
-      "legs": [],
-      "entryFee": 0.5,
-      "funding": 0.6178615927733361
+      "funding": 1.51360292578065
     },
     "BCH": {
       "symbol": "BCH",
@@ -159,7 +95,103 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5,
-      "funding": 0
+      "funding": -0.09840340179717585
+    },
+    "BNB": {
+      "symbol": "BNB",
+      "side": -1,
+      "qty": 1.2987012987012987,
+      "initialQty": 1.2987012987012987,
+      "entryPrice": 770,
+      "t": 1791338400000,
+      "margin": 100,
+      "stopPrice": 796.95,
+      "initialStopPrice": 796.95,
+      "tp": [
+        {
+          "price": 729.575,
+          "pct": 30,
+          "done": false
+        },
+        {
+          "price": 689.15,
+          "pct": 30,
+          "done": false
+        },
+        {
+          "price": 648.725,
+          "pct": 40,
+          "done": false
+        }
+      ],
+      "stopMovedToBE": false,
+      "legs": [],
+      "entryFee": 0.5,
+      "funding": -0.075012987012987
+    },
+    "XRP": {
+      "symbol": "XRP",
+      "side": -1,
+      "qty": 682.7802813054759,
+      "initialQty": 682.7802813054759,
+      "entryPrice": 1.4646,
+      "t": 1791345600000,
+      "margin": 100,
+      "stopPrice": 1.515861,
+      "initialStopPrice": 1.515861,
+      "tp": [
+        {
+          "price": 1.3877085,
+          "pct": 30,
+          "done": false
+        },
+        {
+          "price": 1.310817,
+          "pct": 30,
+          "done": false
+        },
+        {
+          "price": 1.2339254999999998,
+          "pct": 40,
+          "done": false
+        }
+      ],
+      "stopMovedToBE": false,
+      "legs": [],
+      "entryFee": 0.5,
+      "funding": -0.05023385224634713
+    },
+    "DOGE": {
+      "symbol": "DOGE",
+      "side": -1,
+      "qty": 10905.125408942202,
+      "initialQty": 10905.125408942202,
+      "entryPrice": 0.0917,
+      "t": 1791338400000,
+      "margin": 100,
+      "stopPrice": 0.09490950000000001,
+      "initialStopPrice": 0.09490950000000001,
+      "tp": [
+        {
+          "price": 0.08688575,
+          "pct": 30,
+          "done": false
+        },
+        {
+          "price": 0.0820715,
+          "pct": 30,
+          "done": false
+        },
+        {
+          "price": 0.07725725,
+          "pct": 40,
+          "done": false
+        }
+      ],
+      "stopMovedToBE": false,
+      "legs": [],
+      "entryFee": 0.5,
+      "funding": -0.07400763358778625
     }
   }
 }
