@@ -1,5 +1,5 @@
 {
-  "cash": 1302.2927950016242,
+  "cash": 1201.5952637925266,
   "positions": {
     "TRX": {
       "symbol": "TRX",
@@ -31,7 +31,7 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5000000000000001,
-      "funding": 1.8728373575373054
+      "funding": 1.9220942016214317
     },
     "ETH": {
       "symbol": "ETH",
@@ -63,7 +63,7 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5,
-      "funding": 1.5259023950277057
+      "funding": 1.5758494273565051
     },
     "BTC": {
       "symbol": "BTC",
@@ -95,7 +95,7 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5,
-      "funding": 1.365891978065951
+      "funding": 1.415649587980476
     },
     "DOGE": {
       "symbol": "DOGE",
@@ -127,7 +127,39 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5,
-      "funding": 0.569291870003115
+      "funding": 0.6178615927733361
+    },
+    "BCH": {
+      "symbol": "BCH",
+      "side": -1,
+      "qty": 3.2092426187419765,
+      "initialQty": 3.2092426187419765,
+      "entryPrice": 311.6,
+      "t": 1791331200000,
+      "margin": 100,
+      "stopPrice": 322.50600000000003,
+      "initialStopPrice": 322.50600000000003,
+      "tp": [
+        {
+          "price": 295.24100000000004,
+          "pct": 30,
+          "done": false
+        },
+        {
+          "price": 278.882,
+          "pct": 30,
+          "done": false
+        },
+        {
+          "price": 262.523,
+          "pct": 40,
+          "done": false
+        }
+      ],
+      "stopMovedToBE": false,
+      "legs": [],
+      "entryFee": 0.5,
+      "funding": 0
     }
   }
 }
