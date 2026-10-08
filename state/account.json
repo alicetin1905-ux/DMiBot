@@ -1,5 +1,5 @@
 {
-  "cash": 1238.3336512662627,
+  "cash": 1345.4354152637338,
   "positions": {
     "TRX": {
       "symbol": "TRX",
@@ -31,12 +31,12 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5000000000000001,
-      "funding": 2.413325402420398
+      "funding": 2.486633474327342
     },
     "BCH": {
       "symbol": "BCH",
       "side": -1,
-      "qty": 2.2464698331193835,
+      "qty": 1.2836970474967906,
       "initialQty": 3.2092426187419765,
       "entryPrice": 311.6,
       "t": 1791331200000,
@@ -52,7 +52,7 @@
         {
           "price": 278.882,
           "pct": 30,
-          "done": false
+          "done": true
         },
         {
           "price": 262.523,
@@ -68,26 +68,33 @@
           "t": 1791432000000,
           "reason": "TP1 (1.5R, 30%)",
           "pnl": 15.607874999999979
+        },
+        {
+          "qty": 0.9627727856225929,
+          "price": 278.882,
+          "t": 1791475200000,
+          "reason": "TP2 (3R, 30%)",
+          "pnl": 31.365750000000013
         }
       ],
       "entryFee": 0.5,
-      "funding": -0.438739569961489
+      "funding": -0.4656747432605904
     },
     "BNB": {
       "symbol": "BNB",
       "side": -1,
-      "qty": 1.2987012987012987,
+      "qty": 0.9090909090909092,
       "initialQty": 1.2987012987012987,
       "entryPrice": 770,
       "t": 1791338400000,
       "margin": 100,
-      "stopPrice": 796.95,
+      "stopPrice": 770,
       "initialStopPrice": 796.95,
       "tp": [
         {
           "price": 729.575,
           "pct": 30,
-          "done": false
+          "done": true
         },
         {
           "price": 689.15,
@@ -100,10 +107,18 @@
           "done": false
         }
       ],
-      "stopMovedToBE": false,
-      "legs": [],
+      "stopMovedToBE": true,
+      "legs": [
+        {
+          "qty": 0.3896103896103896,
+          "price": 729.575,
+          "t": 1791475200000,
+          "reason": "TP1 (1.5R, 30%)",
+          "pnl": 15.60787499999998
+        }
+      ],
       "entryFee": 0.5,
-      "funding": -0.4726655844155844
+      "funding": -0.522326948051948
     },
     "XRP": {
       "symbol": "XRP",
@@ -143,7 +158,7 @@
         }
       ],
       "entryFee": 0.5,
-      "funding": -0.3938153762119351
+      "funding": -0.44249897582957815
     },
     "DOGE": {
       "symbol": "DOGE",
@@ -190,7 +205,7 @@
         }
       ],
       "entryFee": 0.5,
-      "funding": -0.4084261177753544
+      "funding": -0.43563440567066525
     },
     "LINK": {
       "symbol": "LINK",
@@ -230,7 +245,7 @@
         }
       ],
       "entryFee": 0.5,
-      "funding": -0.33747270415794195
+      "funding": -0.3864313490876458
     }
   }
 }
