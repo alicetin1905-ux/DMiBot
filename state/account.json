@@ -1,5 +1,5 @@
 {
-  "cash": 993.8137574650494,
+  "cash": 993.9604101590243,
   "positions": {
     "TRX": {
       "symbol": "TRX",
@@ -31,7 +31,7 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5000000000000001,
-      "funding": 2.1919332334625783
+      "funding": 2.2412069674538837
     },
     "BCH": {
       "symbol": "BCH",
@@ -63,7 +63,7 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5,
-      "funding": -0.26785141206675217
+      "funding": -0.3159579589216944
     },
     "BNB": {
       "symbol": "BNB",
@@ -95,7 +95,7 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5,
-      "funding": -0.24973376623376625
+      "funding": -0.2998636363636364
     },
     "XRP": {
       "symbol": "XRP",
@@ -127,7 +127,7 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5,
-      "funding": -0.22119691383312853
+      "funding": -0.2697221084255087
     },
     "DOGE": {
       "symbol": "DOGE",
@@ -159,7 +159,7 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5,
-      "funding": -0.24334242093784075
+      "funding": -0.2676063249727372
     },
     "LINK": {
       "symbol": "LINK",
@@ -191,7 +191,7 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5,
-      "funding": -0.12495886927909065
+      "funding": -0.14985978163326355
     }
   }
 }
