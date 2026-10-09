@@ -482,5 +482,105 @@
       }
     ],
     "reason": "TP1 (1.5R, 30%) + ADX trend reversal (ADX 52.3 crossed under smooth ADX)"
+  },
+  {
+    "type": "exit",
+    "symbol": "BNB",
+    "side": -1,
+    "qty": 1.2987012987012987,
+    "avgEntry": 770,
+    "price": 736.7325000000001,
+    "openedAt": 1791338400000,
+    "closedAt": 1791561600000,
+    "pnl": 42.89988149350652,
+    "pnlPct": 42.89988149350652,
+    "leverage": 10,
+    "funding": -0.6737337662337662,
+    "legs": [
+      {
+        "qty": 0.3896103896103896,
+        "price": 729.575,
+        "t": 1791475200000,
+        "reason": "TP1 (1.5R, 30%)",
+        "pnl": 15.60787499999998
+      },
+      {
+        "qty": 0.9090909090909092,
+        "price": 739.8,
+        "t": 1791561600000,
+        "reason": "ADX trend reversal (ADX 44.3 crossed under smooth ADX)",
+        "pnl": 27.11827272727277
+      }
+    ],
+    "reason": "TP1 (1.5R, 30%) + ADX trend reversal (ADX 44.3 crossed under smooth ADX)"
+  },
+  {
+    "type": "exit",
+    "symbol": "DOGE",
+    "side": -1,
+    "qty": 10905.1254089422,
+    "avgEntry": 0.0917,
+    "price": 0.08445517500000001,
+    "openedAt": 1791338400000,
+    "closedAt": 1791554400000,
+    "pnl": 78.55487118320615,
+    "pnlPct": 78.55487118320615,
+    "leverage": 10,
+    "funding": -0.5096431297709924,
+    "legs": [
+      {
+        "qty": 3271.5376226826606,
+        "price": 0.08688575,
+        "t": 1791432000000,
+        "reason": "TP1 (1.5R, 30%)",
+        "pnl": 15.60787500000002
+      },
+      {
+        "qty": 3271.5376226826606,
+        "price": 0.0820715,
+        "t": 1791468000000,
+        "reason": "TP2 (3R, 30%)",
+        "pnl": 31.36574999999999
+      },
+      {
+        "qty": 4362.05016357688,
+        "price": 0.08442,
+        "t": 1791554400000,
+        "reason": "ADX trend reversal (ADX 55.4 crossed under smooth ADX)",
+        "pnl": 31.571603053435144
+      }
+    ],
+    "reason": "TP1 (1.5R, 30%) + TP2 (3R, 30%) + ADX trend reversal (ADX 55.4 crossed under smooth ADX)"
+  },
+  {
+    "type": "exit",
+    "symbol": "LINK",
+    "side": -1,
+    "qty": 74.78312892611427,
+    "avgEntry": 13.372,
+    "price": 12.830991,
+    "openedAt": 1791374400000,
+    "closedAt": 1791540000000,
+    "pnl": 39.965821081364034,
+    "pnlPct": 39.965821081364034,
+    "leverage": 10,
+    "funding": -0.48724611127729583,
+    "legs": [
+      {
+        "qty": 22.434938677834282,
+        "price": 12.66997,
+        "t": 1791468000000,
+        "reason": "TP1 (1.5R, 30%)",
+        "pnl": 15.607875000000014
+      },
+      {
+        "qty": 52.34819024827999,
+        "price": 12.9,
+        "t": 1791540000000,
+        "reason": "ADX trend reversal (ADX 54.8 crossed under smooth ADX)",
+        "pnl": 24.370699970086726
+      }
+    ],
+    "reason": "TP1 (1.5R, 30%) + ADX trend reversal (ADX 54.8 crossed under smooth ADX)"
   }
 ]

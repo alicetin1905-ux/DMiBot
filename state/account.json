@@ -1,5 +1,5 @@
 {
-  "cash": 1444.7138831872892,
+  "cash": 1707.824235845492,
   "positions": {
     "TRX": {
       "symbol": "TRX",
@@ -31,7 +31,7 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5000000000000001,
-      "funding": 2.608571995065211
+      "funding": 2.706194189871932
     },
     "BCH": {
       "symbol": "BCH",
@@ -78,134 +78,7 @@
         }
       ],
       "entryFee": 0.5,
-      "funding": -0.5102607509627728
-    },
-    "BNB": {
-      "symbol": "BNB",
-      "side": -1,
-      "qty": 0.9090909090909092,
-      "initialQty": 1.2987012987012987,
-      "entryPrice": 770,
-      "t": 1791338400000,
-      "margin": 100,
-      "stopPrice": 770,
-      "initialStopPrice": 796.95,
-      "tp": [
-        {
-          "price": 729.575,
-          "pct": 30,
-          "done": true
-        },
-        {
-          "price": 689.15,
-          "pct": 30,
-          "done": false
-        },
-        {
-          "price": 648.725,
-          "pct": 40,
-          "done": false
-        }
-      ],
-      "stopMovedToBE": true,
-      "legs": [
-        {
-          "qty": 0.3896103896103896,
-          "price": 729.575,
-          "t": 1791475200000,
-          "reason": "TP1 (1.5R, 30%)",
-          "pnl": 15.60787499999998
-        }
-      ],
-      "entryFee": 0.5,
-      "funding": -0.6063724025974025
-    },
-    "DOGE": {
-      "symbol": "DOGE",
-      "side": -1,
-      "qty": 4362.05016357688,
-      "initialQty": 10905.125408942202,
-      "entryPrice": 0.0917,
-      "t": 1791338400000,
-      "margin": 100,
-      "stopPrice": 0.0917,
-      "initialStopPrice": 0.09490950000000001,
-      "tp": [
-        {
-          "price": 0.08688575,
-          "pct": 30,
-          "done": true
-        },
-        {
-          "price": 0.0820715,
-          "pct": 30,
-          "done": true
-        },
-        {
-          "price": 0.07725725,
-          "pct": 40,
-          "done": false
-        }
-      ],
-      "stopMovedToBE": true,
-      "legs": [
-        {
-          "qty": 3271.5376226826606,
-          "price": 0.08688575,
-          "t": 1791432000000,
-          "reason": "TP1 (1.5R, 30%)",
-          "pnl": 15.60787500000002
-        },
-        {
-          "qty": 3271.5376226826606,
-          "price": 0.0820715,
-          "t": 1791468000000,
-          "reason": "TP2 (3R, 30%)",
-          "pnl": 31.36574999999999
-        }
-      ],
-      "entryFee": 0.5,
-      "funding": -0.48189394765539806
-    },
-    "LINK": {
-      "symbol": "LINK",
-      "side": -1,
-      "qty": 52.34819024827999,
-      "initialQty": 74.78312892611427,
-      "entryPrice": 13.372,
-      "t": 1791374400000,
-      "margin": 100,
-      "stopPrice": 13.372,
-      "initialStopPrice": 13.840019999999999,
-      "tp": [
-        {
-          "price": 12.66997,
-          "pct": 30,
-          "done": true
-        },
-        {
-          "price": 11.96794,
-          "pct": 30,
-          "done": false
-        },
-        {
-          "price": 11.26591,
-          "pct": 40,
-          "done": false
-        }
-      ],
-      "stopMovedToBE": true,
-      "legs": [
-        {
-          "qty": 22.434938677834282,
-          "price": 12.66997,
-          "t": 1791468000000,
-          "reason": "TP1 (1.5R, 30%)",
-          "pnl": 15.607875000000014
-        }
-      ],
-      "entryFee": 0.5,
-      "funding": -0.47036512862698177
+      "funding": -0.545668324775353
     }
   }
 }
