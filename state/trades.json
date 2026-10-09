@@ -451,5 +451,36 @@
       }
     ],
     "reason": "stop loss (-$35)"
+  },
+  {
+    "type": "exit",
+    "symbol": "XRP",
+    "side": -1,
+    "qty": 682.7802813054759,
+    "avgEntry": 1.4646,
+    "price": 1.39848255,
+    "openedAt": 1791345600000,
+    "closedAt": 1791532800000,
+    "pnl": 44.691955636351146,
+    "pnlPct": 44.691955636351146,
+    "leverage": 10,
+    "funding": -0.5256926805953845,
+    "legs": [
+      {
+        "qty": 204.83408439164276,
+        "price": 1.3877085,
+        "t": 1791432000000,
+        "reason": "TP1 (1.5R, 30%)",
+        "pnl": 15.607874999999977
+      },
+      {
+        "qty": 477.94619691383315,
+        "price": 1.4031,
+        "t": 1791532800000,
+        "reason": "ADX trend reversal (ADX 52.3 crossed under smooth ADX)",
+        "pnl": 29.058387955755784
+      }
+    ],
+    "reason": "TP1 (1.5R, 30%) + ADX trend reversal (ADX 52.3 crossed under smooth ADX)"
   }
 ]
