@@ -1,5 +1,5 @@
 {
-  "cash": 1707.824235845492,
+  "cash": 1707.7930638891746,
   "positions": {
     "TRX": {
       "symbol": "TRX",
@@ -31,7 +31,7 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5000000000000001,
-      "funding": 2.706194189871932
+      "funding": 2.7549656327106113
     },
     "BCH": {
       "symbol": "BCH",
@@ -78,7 +78,7 @@
         }
       ],
       "entryFee": 0.5,
-      "funding": -0.545668324775353
+      "funding": -0.5632678112965339
     }
   }
 }
