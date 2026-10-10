@@ -1,5 +1,5 @@
 {
-  "cash": 1789.8084131272442,
+  "cash": 1789.735497929265,
   "positions": {
     "TRX": {
       "symbol": "TRX",
@@ -31,7 +31,7 @@
       "stopMovedToBE": false,
       "legs": [],
       "entryFee": 0.5000000000000001,
-      "funding": 2.9494463047820485
+      "funding": 3.0223615027611346
     }
   }
 }
