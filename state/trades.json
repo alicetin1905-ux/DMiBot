@@ -582,5 +582,43 @@
       }
     ],
     "reason": "TP1 (1.5R, 30%) + ADX trend reversal (ADX 54.8 crossed under smooth ADX)"
+  },
+  {
+    "type": "exit",
+    "symbol": "BCH",
+    "side": -1,
+    "qty": 3.2092426187419765,
+    "avgEntry": 311.6,
+    "price": 283.67690000000005,
+    "openedAt": 1791331200000,
+    "closedAt": 1791597600000,
+    "pnl": 89.24672272143772,
+    "pnlPct": 89.24672272143772,
+    "leverage": 10,
+    "funding": -0.5899141527599486,
+    "legs": [
+      {
+        "qty": 0.9627727856225929,
+        "price": 295.24100000000004,
+        "t": 1791432000000,
+        "reason": "TP1 (1.5R, 30%)",
+        "pnl": 15.607874999999979
+      },
+      {
+        "qty": 0.9627727856225929,
+        "price": 278.882,
+        "t": 1791475200000,
+        "reason": "TP2 (3R, 30%)",
+        "pnl": 31.365750000000013
+      },
+      {
+        "qty": 1.2836970474967906,
+        "price": 278.6,
+        "t": 1791597600000,
+        "reason": "ADX trend reversal (ADX 71.1 crossed under smooth ADX)",
+        "pnl": 42.183183568677784
+      }
+    ],
+    "reason": "TP1 (1.5R, 30%) + TP2 (3R, 30%) + ADX trend reversal (ADX 71.1 crossed under smooth ADX)"
   }
 ]
